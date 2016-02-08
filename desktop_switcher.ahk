@@ -54,6 +54,7 @@ deleteVirtualDesktop()
 	OutputDebug, [delete] desktops: %desktopCount% current: %currentDesktop%
 }
 
+
 ; User config! 
 ; This section binds the key combo to the switch/create/delete actions
 CapsLock & 1::switchDesktopByNumber(1)
@@ -67,3 +68,16 @@ CapsLock & 8::switchDesktopByNumber(8)
 CapsLock & 9::switchDesktopByNumber(9)
 CapsLock & c::createVirtualDesktop()
 CapsLock & d::deleteVirtualDesktop()
+
+; Alternate keys for this config. Adding these because DragonFly (python) doesn't send CapsLock correctly.
+^!1::switchDesktopByNumber(1)
+^!2::switchDesktopByNumber(2)
+^!3::switchDesktopByNumber(3)
+^!4::switchDesktopByNumber(4)
+^!5::switchDesktopByNumber(5)
+^!6::switchDesktopByNumber(6)
+^!7::switchDesktopByNumber(7)
+^!8::switchDesktopByNumber(8)
+^!9::switchDesktopByNumber(9)
+^!c::createVirtualDesktop()
+^!d::deleteVirtualDesktop()
