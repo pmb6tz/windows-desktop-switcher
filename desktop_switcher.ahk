@@ -60,17 +60,15 @@ switchDesktopByNumber(targetDesktop)
 	
 	; Go right until we reach the desktop we want
 	while(CurrentDesktop < targetDesktop) {
-        SendEvent ^#{Right}	
+        Send ^#{Right}	
 		CurrentDesktop++
-		Sleep, 50
     	OutputDebug, [right] target: %targetDesktop% current: %CurrentDesktop%
 	}
 	
 	; Go left until we reach the desktop we want
 	while(CurrentDesktop > targetDesktop) {
-	    SendEvent ^#{Left}
+	    Send ^#{Left}
 		CurrentDesktop--
-		Sleep, 50
 		OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
 	}
 }
@@ -100,6 +98,7 @@ deleteVirtualDesktop()
 }
 
 ; Main
+SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 
