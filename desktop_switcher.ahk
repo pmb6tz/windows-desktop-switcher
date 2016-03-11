@@ -9,7 +9,7 @@ CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them thi
 ;
 mapDesktopsFromRegistry() {
     global CurrentDesktop, DesktopCount
-    
+
     ; Get the current desktop UUID. Length should be 32 always, but there's no guarantee this couldn't change in a later Windows release so we check.
     RegRead, CurrentDesktopId, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1\VirtualDesktops, CurrentVirtualDesktop
     IdLength := StrLen(CurrentDesktopId)
@@ -28,7 +28,7 @@ mapDesktopsFromRegistry() {
         DesktopIter := SubStr(DesktopList, StartPos, IdLength)
         OutputDebug, The iterator is pointing at %DesktopIter% and count is %i%.
 
-        ; Break out if we find a match in the list. If we didn't find anything, keep the 
+        ; Break out if we find a match in the list. If we didn't find anything, keep the
         ; old guess and pray we're still correct :-D.
         if (DesktopIter = CurrentDesktopId) {
             CurrentDesktop := i + 1
@@ -45,11 +45,11 @@ mapDesktopsFromRegistry() {
 switchDesktopByNumber(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
-    
-    ; Re-generate the list of desktops and where we fit in that. We do this because 
+
+    ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
     mapDesktopsFromRegistry()
-    
+
     ; If the user is trying to swap to a desktop that isn't valid, don't let
     ; them because we'd lose track of numbering. Unfortunately, we have to assume
     ; that this script was started when there were three desktops because we have
@@ -57,14 +57,14 @@ switchDesktopByNumber(targetDesktop)
     if (targetDesktop > DesktopCount) {
         return
     }
-    
+
     ; Go right until we reach the desktop we want
     while(CurrentDesktop < targetDesktop) {
-        Send ^#{Right}  
+        Send ^#{Right}
         CurrentDesktop++
         OutputDebug, [right] target: %targetDesktop% current: %CurrentDesktop%
     }
-    
+
     ; Go left until we reach the desktop we want
     while(CurrentDesktop > targetDesktop) {
         Send ^#{Left}
@@ -97,12 +97,42 @@ deleteVirtualDesktop()
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
 }
 
+;
+; This function selects the previous virtual desktop using Windows shortcuts.
+;
+switchPreviousDesktop()
+{
+    global CurrentDesktop
+    mapDesktopsFromRegistry()
+    ; Only operate if not on first desktop
+    if (CurrentDesktop SS> 1) {
+        Send ^#{Left}
+        CurrentDesktop--
+        OutputDebug, [previous] current: %CurrentDesktop%
+    }
+}
+
+;
+; This function selects the next virtual desktop using Windows shortcuts.
+;
+switchNextDesktop()
+{
+    global CurrentDesktop, DesktopCount
+    mapDesktopsFromRegistry()
+    ; Only operate if not on last desktop
+    if (CurrentDesktop < DesktopCount) {
+        Send ^#{Right}
+        CurrentDesktop++
+        OutputDebug, [next] current: %CurrentDesktop%
+    }
+}
+
 ; Main
 SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 
-; User config! 
+; User config!
 ; This section binds the key combo to the switch/create/delete actions
 CapsLock & 1::switchDesktopByNumber(1)
 CapsLock & 2::switchDesktopByNumber(2)
@@ -113,6 +143,8 @@ CapsLock & 6::switchDesktopByNumber(6)
 CapsLock & 7::switchDesktopByNumber(7)
 CapsLock & 8::switchDesktopByNumber(8)
 CapsLock & 9::switchDesktopByNumber(9)
+CapsLock & a::switchPreviousDesktop()
+CapsLock & s::switchNextDesktop()
 CapsLock & c::createVirtualDesktop()
 CapsLock & d::deleteVirtualDesktop()
 
