@@ -29,9 +29,11 @@ mapDesktopsFromRegistry() {
 
         ; Break out if we find a match in the list. If we didn't find anything, keep the
         ; old guess and pray we're still correct :-D.
-        PreviousDesktop := CurrentDesktop
-        if (DesktopIter = CurrentDesktopId) {
-            CurrentDesktop := i + 1
+        if (DesktopIter = CurrentDesktopId and CurrentDesktop <> i + 1) {
+            if (CurrentDesktop <> i + 1) {
+                PreviousDesktop := CurrentDesktop
+                CurrentDesktop := i + 1
+            }
             OutputDebug, Current desktop number is %CurrentDesktop% with an ID of %DesktopIter%.
             break
         }
@@ -68,6 +70,12 @@ switchDesktopByNumber(targetDesktop)
         CurrentDesktop--
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
     }
+}
+
+switchToPreviousDesktop()
+{
+    mapDesktopsFromRegistry()
+    switchDesktopByNumber(PreviousDesktop)
 }
 
 ;
@@ -116,6 +124,7 @@ CapsLock & s::switchDesktopByNumber(CurrentDesktop + 1)
 CapsLock & a::switchDesktopByNumber(CurrentDesktop - 1)
 CapsLock & c::createVirtualDesktop()
 CapsLock & d::deleteVirtualDesktop()
+CapsLock & `::switchToPreviousDesktop()
 
 ; Alternate keys for this config. Adding these because DragonFly (python) doesn't send CapsLock correctly.
 ^!1::switchDesktopByNumber(1)
