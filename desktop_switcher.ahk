@@ -46,8 +46,7 @@ mapDesktopsFromRegistry() {
 getSessionId()
 {
     ProcessId := DllCall("GetCurrentProcessId", "UInt")
-    if ErrorLevel
-    {
+    if ErrorLevel {
         OutputDebug, Error getting current process id: %ErrorLevel%
         return
     }
