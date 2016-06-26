@@ -11,19 +11,29 @@ mapDesktopsFromRegistry() {
     global CurrentDesktop, DesktopCount
 
     ; Get the current desktop UUID. Length should be 32 always, but there's no guarantee this couldn't change in a later Windows release so we check.
-    RegRead, CurrentDesktopId, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1\VirtualDesktops, CurrentVirtualDesktop
-    IdLength := StrLen(CurrentDesktopId)
+    IdLength := 32
+    SessionId := getSessionId()
+    if (SessionId) {
+        RegRead, CurrentDesktopId, HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\%SessionId%\VirtualDesktops, CurrentVirtualDesktop
+        if (CurrentDesktopId) {
+            IdLength := StrLen(CurrentDesktopId)
+        }
+    }
 
     ; Get a list of the UUIDs for all virtual desktops on the system
     RegRead, DesktopList, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops, VirtualDesktopIDs
-    DesktopListLength := StrLen(DesktopList)
-
-    ; Figure out how many virtual desktops there are
-    DesktopCount := DesktopListLength/IdLength
+    if (DesktopList) {
+        DesktopListLength := StrLen(DesktopList)
+        ; Figure out how many virtual desktops there are
+        DesktopCount := DesktopListLength / IdLength
+    }
+    else {
+        DesktopCount := 1
+    }
 
     ; Parse the REG_DATA string that stores the array of UUID's for virtual desktops in the registry.
     i := 0
-    while (i < DesktopCount) {
+    while (CurrentDesktopId and i < DesktopCount) {
         StartPos := (i * IdLength) + 1
         DesktopIter := SubStr(DesktopList, StartPos, IdLength)
         OutputDebug, The iterator is pointing at %DesktopIter% and count is %i%.
@@ -37,6 +47,27 @@ mapDesktopsFromRegistry() {
         }
         i++
     }
+}
+
+;
+; This functions finds out ID of current session.
+;
+getSessionId()
+{
+    ProcessId := DllCall("GetCurrentProcessId", "UInt")
+    if ErrorLevel {
+        OutputDebug, Error getting current process id: %ErrorLevel%
+        return
+    }
+    OutputDebug, Current Process Id: %ProcessId%
+
+    DllCall("ProcessIdToSessionId", "UInt", ProcessId, "UInt*", SessionId)
+    if ErrorLevel {
+        OutputDebug, Error getting session id: %ErrorLevel%
+        return
+    }
+    OutputDebug, Current Session Id: %SessionId%
+    return SessionId
 }
 
 ;
