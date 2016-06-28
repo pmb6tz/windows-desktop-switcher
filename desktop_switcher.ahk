@@ -43,6 +43,9 @@ mapDesktopsFromRegistry() {
     }
 }
 
+;
+; This functions finds out ID of current session.
+;
 getSessionId()
 {
     ProcessId := DllCall("GetCurrentProcessId", "UInt")
