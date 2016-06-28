@@ -29,7 +29,7 @@ mapDesktopsFromRegistry() {
 
         ; Break out if we find a match in the list. If we didn't find anything, keep the
         ; old guess and pray we're still correct :-D.
-        if (DesktopIter = CurrentDesktopId and CurrentDesktop <> i + 1) {
+        if (DesktopIter = CurrentDesktopId) {
             if (CurrentDesktop <> i + 1) {
                 PreviousDesktop := CurrentDesktop
                 CurrentDesktop := i + 1
