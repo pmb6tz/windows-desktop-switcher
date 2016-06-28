@@ -74,6 +74,9 @@ switchDesktopByNumber(targetDesktop, map := true)
     }
 }
 
+;
+; This function switches to last desktop where you were before
+;
 switchToPreviousDesktop()
 {
     mapDesktopsFromRegistry()
