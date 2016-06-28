@@ -44,11 +44,13 @@ mapDesktopsFromRegistry() {
 ;
 ; This function switches to the desktop number provided.
 ;
-switchDesktopByNumber(targetDesktop)
+switchDesktopByNumber(targetDesktop, map := true)
 {
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
-    mapDesktopsFromRegistry()
+    if (map) {
+        mapDesktopsFromRegistry()
+    }
 
     ; Don't attempt to switch to an invalid desktop
     if (targetDesktop > DesktopCount || targetDesktop < 0) {
@@ -75,7 +77,7 @@ switchDesktopByNumber(targetDesktop)
 switchToPreviousDesktop()
 {
     mapDesktopsFromRegistry()
-    switchDesktopByNumber(PreviousDesktop)
+    switchDesktopByNumber(PreviousDesktop, false)
 }
 
 ;
