@@ -11,23 +11,29 @@ mapDesktopsFromRegistry() {
     global CurrentDesktop, DesktopCount
 
     ; Get the current desktop UUID. Length should be 32 always, but there's no guarantee this couldn't change in a later Windows release so we check.
+    IdLength := 32
     SessionId := getSessionId()
-    if (!SessionId) {
-        return
+    if (SessionId) {
+        RegRead, CurrentDesktopId, HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\%SessionId%\VirtualDesktops, CurrentVirtualDesktop
+        if (CurrentDesktopId) {
+            IdLength := StrLen(CurrentDesktopId)
+        }
     }
-    RegRead, CurrentDesktopId, HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\%SessionId%\VirtualDesktops, CurrentVirtualDesktop
-    IdLength := StrLen(CurrentDesktopId)
 
     ; Get a list of the UUIDs for all virtual desktops on the system
     RegRead, DesktopList, HKEY_CURRENT_USER, SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops, VirtualDesktopIDs
-    DesktopListLength := StrLen(DesktopList)
-
-    ; Figure out how many virtual desktops there are
-    DesktopCount := DesktopListLength/IdLength
+    if (DesktopList) {
+        DesktopListLength := StrLen(DesktopList)
+        ; Figure out how many virtual desktops there are
+        DesktopCount := DesktopListLength / IdLength
+    }
+    else {
+        DesktopCount := 1
+    }
 
     ; Parse the REG_DATA string that stores the array of UUID's for virtual desktops in the registry.
     i := 0
-    while (i < DesktopCount) {
+    while (CurrentDesktopId and i < DesktopCount) {
         StartPos := (i * IdLength) + 1
         DesktopIter := SubStr(DesktopList, StartPos, IdLength)
         OutputDebug, The iterator is pointing at %DesktopIter% and count is %i%.
