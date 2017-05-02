@@ -103,6 +103,40 @@ switchDesktopByNumber(targetDesktop)
 }
 
 ;
+; This function switches to the desktop on the right of the current one (wrapping from the last to the first).
+;
+cycleDesktopRight()
+{
+    global CurrentDesktop, DesktopCount
+	
+	; If the current desktop is the last on the right:
+    if (CurrentDesktop == DesktopCount) {
+        ; Switch to the first on the left.
+        switchDesktopByNumber(1)
+    } else {
+        ; Switch to the desktop on the right of the current one.
+        switchDesktopByNumber(CurrentDesktop + 1)
+	}
+}
+
+;
+; This function switches to the desktop on the left of the current one (wrapping from the first to the last).
+;
+cycleDesktopLeft()
+{
+    global CurrentDesktop, DesktopCount
+	
+	; If the current desktop is the first on the left:
+    if (CurrentDesktop == 1) {
+        ; Switch to the last on the right.
+        switchDesktopByNumber(DesktopCount)
+    } else {
+        ; Switch to the desktop on the left of the current one.
+        switchDesktopByNumber(CurrentDesktop - 1)
+	}
+}
+
+;
 ; This function creates a new virtual desktop and switches to it
 ;
 createVirtualDesktop()
@@ -142,10 +176,19 @@ CapsLock & 6::switchDesktopByNumber(6)
 CapsLock & 7::switchDesktopByNumber(7)
 CapsLock & 8::switchDesktopByNumber(8)
 CapsLock & 9::switchDesktopByNumber(9)
+
+; Switch and stop at the end.
 CapsLock & n::switchDesktopByNumber(CurrentDesktop + 1)
 CapsLock & p::switchDesktopByNumber(CurrentDesktop - 1)
 CapsLock & s::switchDesktopByNumber(CurrentDesktop + 1)
 CapsLock & a::switchDesktopByNumber(CurrentDesktop - 1)
+
+; Wrap last to first and first to last.
+;CapsLock & n::cycleDesktopRight()
+;CapsLock & p::cycleDesktopLeft()
+;CapsLock & a::cycleDesktopRight()
+;CapsLock & s::cycleDesktopLeft()
+
 CapsLock & c::createVirtualDesktop()
 CapsLock & d::deleteVirtualDesktop()
 
@@ -159,9 +202,18 @@ CapsLock & d::deleteVirtualDesktop()
 ^!7::switchDesktopByNumber(7)
 ^!8::switchDesktopByNumber(8)
 ^!9::switchDesktopByNumber(9)
+
+; Switch and stop at the end.
 ^!n::switchDesktopByNumber(CurrentDesktop + 1)
 ^!p::switchDesktopByNumber(CurrentDesktop - 1)
 ^!s::switchDesktopByNumber(CurrentDesktop + 1)
 ^!a::switchDesktopByNumber(CurrentDesktop - 1)
+
+; Wrap last to first and first to last.
+;^!n::cycleDesktopRight()
+;^!p::cycleDesktopLeft()
+;^!a::cycleDesktopRight()
+;^!s::cycleDesktopLeft()
+
 ^!c::createVirtualDesktop()
 ^!d::deleteVirtualDesktop()
