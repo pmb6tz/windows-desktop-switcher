@@ -1,3 +1,7 @@
+### Quick note
+I wrote this as a quick evening script to solve my problem. If you're looking for something more robust & need more than this script can give you, check out:
+https://github.com/sdias/win-10-virtual-desktop-enhancer
+
 # windows-desktop-switcher
 An AutoHotKey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num>. It also allows for creation/deletion of desktops by hotkey (see below).
 
