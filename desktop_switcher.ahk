@@ -76,6 +76,12 @@ getSessionId()
 switchDesktopByNumber(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
+    
+    ; There are two issues with switching desktops while taskbar is inactive
+    ; 1. Occasionally, due to active windows in intermediary desktops, not all "go right" or "go left" hotkeys are resulting in a switched desktop, this results in switcher getting stuck midway
+    ; 2. Switching is not instantaneous anymore, this introduces rapid flashing (each desktop shows itself for a brief moment)
+    ; Therefore we will activate taskbar
+    WinActivate, ahk_class Shell_TrayWnd
 
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
