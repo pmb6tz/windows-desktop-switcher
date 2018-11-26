@@ -77,12 +77,11 @@ switchDesktopByNumber(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
     
-    ; There are three issues with switching desktops while taskbar is inactive (and there are active intermediary windows)
-    ; 1. Occasionally, due to active windows in intermediary desktops, not all "go right" or "go left" hotkeys are resulting in a switched desktop, this results in switcher getting stuck midway (not at the destination desktop, while at the end CurrentDesktop gets itself set to the target desktop number)
+    ; There are three issues with switching desktops with active windows in intermediary desktops:
+    ; 1. Occasionally, not all "go right" or "go left" hotkeys are resulting in a switched desktop, this results in switcher getting stuck midway (not at the destination desktop, while at the end CurrentDesktop gets itself set to the target desktop number)
     ; 2. Switching is not instantaneous anymore, this introduces rapid flashing (each desktop shows itself for a brief moment)
     ; 3. Flashing orange notifications on taskbar on intermediary windows (https://github.com/pmb6tz/windows-desktop-switcher/issues/8)
     ; Therefore we will activate taskbar
-    
     WinActivate, ahk_class Shell_TrayWnd
 
     ; Re-generate the list of desktops and where we fit in that. We do this because
