@@ -13,7 +13,7 @@ hotkey support for this feature (for instance, there's no way to go directly to 
 Note that this only overrides CapsLock for the key combinations below. Otherwise, CapsLock will function normally.
 
 ## Installation
-Install AutoHotKey, then run the desktop_switcher.ahk script (open with AutoHotKey if prompted). I would recommend putting it in your startup folder and it'll be invoked on login.
+Install AutoHotKey v1.1 or later, then run the desktop_switcher.ahk script (open with AutoHotKey if prompted). I would recommend putting it in your startup folder and it'll be invoked on login.
 
 ## Hotkeys
         <CapsLock> + <Num>      - Switches to virtual desktop "num".
