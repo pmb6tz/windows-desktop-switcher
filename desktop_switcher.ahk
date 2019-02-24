@@ -1,6 +1,13 @@
+#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
+SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
+
 ; Globals
 DesktopCount = 2        ; Windows starts with 2 desktops at boot
 CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
+
+; DLL
+hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\virtual-desktop-accessor.dll", "Ptr")
+global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsWindowOnDesktopNumber", "Ptr")
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
@@ -94,6 +101,8 @@ switchDesktopByNumber(targetDesktop)
         return
     }
 
+    WinActivate, ahk_class Shell_TrayWnd ; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switchng sequence. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
+
     ; Go right until we reach the desktop we want
     while(CurrentDesktop < targetDesktop) {
         Send ^#{Right}
@@ -106,6 +115,29 @@ switchDesktopByNumber(targetDesktop)
         Send ^#{Left}
         CurrentDesktop--
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
+    }
+
+    Sleep, 50
+    focusTheForemostWindow(targetDesktop)
+}
+
+focusTheForemostWindow(targetDesktop) {
+    foremostWindowId := getForemostWindowIdOnDesktop(targetDesktop)
+    WinActivate, ahk_id %foremostWindowId%
+}
+
+getForemostWindowIdOnDesktop(n) {
+    n := n - 1 ; Desktops start at 0, while in script it's 1
+
+    ; winIDList contains a list of windows IDs ordered from the top to the bottom for each desktop.
+    WinGet winIDList, list
+    Loop % winIDList {
+        windowID := % winIDList%A_Index%
+        windowIsOnDesktop := DllCall(IsWindowOnDesktopNumberProc, UInt, windowID, UInt, n)
+        ; Select the first (and foremost) window which is in the specified desktop.
+        if (windowIsOnDesktop == 1) {
+            return windowID
+        }
     }
 }
 
