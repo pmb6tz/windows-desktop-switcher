@@ -96,14 +96,14 @@ switchDesktopByNumber(targetDesktop)
 
     ; Go right until we reach the desktop we want
     while(CurrentDesktop < targetDesktop) {
-        Send ^#{Right}
+        Send {LWin down}{LCtrl down}{Right down}{LWin up}{LCtrl up}{Right up}
         CurrentDesktop++
         OutputDebug, [right] target: %targetDesktop% current: %CurrentDesktop%
     }
 
     ; Go left until we reach the desktop we want
     while(CurrentDesktop > targetDesktop) {
-        Send ^#{Left}
+        Send {LWin down}{LCtrl down}{Left down}{Lwin up}{LCtrl up}{Left up}
         CurrentDesktop--
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
     }
