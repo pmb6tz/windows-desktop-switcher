@@ -2,8 +2,8 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 
 ; Globals
-DesktopCount = 2        ; Windows starts with 2 desktops at boot
-CurrentDesktop = 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
+DesktopCount := 2        ; Windows starts with 2 desktops at boot
+CurrentDesktop := 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
 
 ; DLL
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\virtual-desktop-accessor.dll", "Ptr")
@@ -33,7 +33,7 @@ mapDesktopsFromRegistry()
     if (DesktopList) {
         DesktopListLength := StrLen(DesktopList)
         ; Figure out how many virtual desktops there are
-        DesktopCount := DesktopListLength / IdLength
+        DesktopCount := floor(DesktopListLength / IdLength)
     }
     else {
         DesktopCount := 1
@@ -78,22 +78,9 @@ getSessionId()
     return SessionId
 }
 
-;
-; This function switches to the desktop number provided.
-;
-switchDesktopByNumber(targetDesktop)
+_switchDesktopToTarget(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
-
-    ; Re-generate the list of desktops and where we fit in that. We do this because
-    ; the user may have switched desktops via some other means than the script.
-    mapDesktopsFromRegistry()
-
-    ; Don't attempt to switch to an invalid desktop
-    if (targetDesktop > DesktopCount || targetDesktop < 1) {
-        OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
-        return
-    }
 
     WinActivate, ahk_class Shell_TrayWnd ; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switchng sequence. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
 
@@ -112,7 +99,61 @@ switchDesktopByNumber(targetDesktop)
     }
 
     Sleep, 50
-    focusTheForemostWindow(targetDesktop)
+    focusTheForemostWindow(targetDesktop) ; Makes the WinActivate fix less intrusive
+}
+
+switchDesktopToNext()
+{
+    global CurrentDesktop, DesktopCount
+
+    ; Re-generate the list of desktops and where we fit in that. We do this because
+    ; the user may have switched desktops via some other means than the script.
+    mapDesktopsFromRegistry()
+
+    ; Don't attempt to switch to an invalid desktop
+    targetDesktop := CurrentDesktop + 1
+    if (targetDesktop > DesktopCount) {
+        targetDesktop := 1
+    }
+
+    _switchDesktopToTarget(targetDesktop)
+}
+
+switchDesktopToPrevious()
+{
+    global CurrentDesktop, DesktopCount
+
+    ; Re-generate the list of desktops and where we fit in that. We do this because
+    ; the user may have switched desktops via some other means than the script.
+    mapDesktopsFromRegistry()
+
+    ; Don't attempt to switch to an invalid desktop
+    targetDesktop := CurrentDesktop - 1
+    if (targetDesktop < 1) {
+        targetDesktop := DesktopCount
+    }
+
+    _switchDesktopToTarget(targetDesktop)
+}
+
+;
+; This function switches to the desktop number provided.
+;
+switchDesktopByNumber(targetDesktop)
+{
+    global CurrentDesktop, DesktopCount
+
+    ; Re-generate the list of desktops and where we fit in that. We do this because
+    ; the user may have switched desktops via some other means than the script.
+    mapDesktopsFromRegistry()
+
+    ; Don't attempt to switch to an invalid desktop
+    if (targetDesktop > DesktopCount || targetDesktop < 1) {
+        OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
+        return
+    }
+
+    _switchDesktopToTarget(targetDesktop)
 }
 
 focusTheForemostWindow(targetDesktop) 
@@ -177,10 +218,10 @@ CapsLock & 6::switchDesktopByNumber(6)
 CapsLock & 7::switchDesktopByNumber(7)
 CapsLock & 8::switchDesktopByNumber(8)
 CapsLock & 9::switchDesktopByNumber(9)
-CapsLock & n::switchDesktopByNumber(CurrentDesktop + 1)
-CapsLock & p::switchDesktopByNumber(CurrentDesktop - 1)
-CapsLock & s::switchDesktopByNumber(CurrentDesktop + 1)
-CapsLock & a::switchDesktopByNumber(CurrentDesktop - 1)
+CapsLock & n::switchDesktopToNext()
+CapsLock & p::switchDesktopToPrevious()
+CapsLock & s::switchDesktopToNext()
+CapsLock & a::switchDesktopToPrevious()
 CapsLock & c::createVirtualDesktop()
 CapsLock & d::deleteVirtualDesktop()
 
@@ -194,9 +235,9 @@ CapsLock & d::deleteVirtualDesktop()
 ^!7::switchDesktopByNumber(7)
 ^!8::switchDesktopByNumber(8)
 ^!9::switchDesktopByNumber(9)
-^!n::switchDesktopByNumber(CurrentDesktop + 1)
-^!p::switchDesktopByNumber(CurrentDesktop - 1)
-^!s::switchDesktopByNumber(CurrentDesktop + 1)
-^!a::switchDesktopByNumber(CurrentDesktop - 1)
+^!n::switchDesktopToNext()
+^!p::switchDesktopToPrevious()
+^!s::switchDesktopToNext()
+^!a::switchDesktopToPrevious()
 ^!c::createVirtualDesktop()
 ^!d::deleteVirtualDesktop()
