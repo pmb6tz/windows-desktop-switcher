@@ -14,7 +14,8 @@ global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDes
 ; Current desktop UUID appears to be in HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\SessionInfo\1\VirtualDesktops
 ; List of desktops appears to be in HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VirtualDesktops
 ;
-mapDesktopsFromRegistry() {
+mapDesktopsFromRegistry() 
+{
     global CurrentDesktop, DesktopCount
 
     ; Get the current desktop UUID. Length should be 32 always, but there's no guarantee this couldn't change in a later Windows release so we check.
@@ -121,12 +122,14 @@ switchDesktopByNumber(targetDesktop)
     focusTheForemostWindow(targetDesktop)
 }
 
-focusTheForemostWindow(targetDesktop) {
+focusTheForemostWindow(targetDesktop) 
+{
     foremostWindowId := getForemostWindowIdOnDesktop(targetDesktop)
     WinActivate, ahk_id %foremostWindowId%
 }
 
-getForemostWindowIdOnDesktop(n) {
+getForemostWindowIdOnDesktop(n) 
+{
     n := n - 1 ; Desktops start at 0, while in script it's 1
 
     ; winIDList contains a list of windows IDs ordered from the top to the bottom for each desktop.
