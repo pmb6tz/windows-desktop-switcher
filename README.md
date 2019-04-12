@@ -6,7 +6,7 @@ This script creates more convenient hotkeys for switching virtual desktops in Wi
 the mapping I use on linux (with dwm), and it's always annoyed me that Windows does not have better
 hotkey support for this feature (for instance, there's no way to go directly to a desktop by number).
 
-Note, CapsLock will function normally even when running this script.
+Note, CapsLock will function normally even when using it as a modifier.
 
 ## Installation
 [Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the desktop_switcher.ahk script (open with AutoHotKey if prompted). I would recommend putting it in your startup folder and it'll be invoked on login. 
