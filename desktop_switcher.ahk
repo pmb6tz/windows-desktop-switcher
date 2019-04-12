@@ -9,6 +9,80 @@ LastOpenedDesktop := 1
 ; DLL
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\virtual-desktop-accessor.dll", "Ptr")
 global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsWindowOnDesktopNumber", "Ptr")
+global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "MoveWindowToDesktopNumber", "Ptr")
+
+; Main
+SetKeyDelay, 75
+mapDesktopsFromRegistry()
+OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
+
+; ================================
+; ====== User configuration ======
+; ================================
+; This section binds the key combo to the switch/create/delete actions
+CapsLock & 1::switchDesktopByNumber(1)
+CapsLock & 2::switchDesktopByNumber(2)
+CapsLock & 3::switchDesktopByNumber(3)
+CapsLock & 4::switchDesktopByNumber(4)
+CapsLock & 5::switchDesktopByNumber(5)
+CapsLock & 6::switchDesktopByNumber(6)
+CapsLock & 7::switchDesktopByNumber(7)
+CapsLock & 8::switchDesktopByNumber(8)
+CapsLock & 9::switchDesktopByNumber(9)
+
+CapsLock & n::switchDesktopToRight()
+CapsLock & p::switchDesktopToLeft()
+CapsLock & s::switchDesktopToRight()
+CapsLock & a::switchDesktopToLeft()
+CapsLock & tab::switchDesktopToLastOpened()
+
+CapsLock & c::createVirtualDesktop()
+CapsLock & d::deleteVirtualDesktop()
+
+CapsLock & q::MoveCurrentWindowToDesktop(1)
+CapsLock & w::MoveCurrentWindowToDesktop(2)
+CapsLock & e::MoveCurrentWindowToDesktop(3)
+CapsLock & r::MoveCurrentWindowToDesktop(4)
+CapsLock & t::MoveCurrentWindowToDesktop(5)
+CapsLock & y::MoveCurrentWindowToDesktop(6)
+CapsLock & u::MoveCurrentWindowToDesktop(7)
+CapsLock & i::MoveCurrentWindowToDesktop(8)
+CapsLock & o::MoveCurrentWindowToDesktop(9)
+
+
+; Alternate keys for this config. Adding these because DragonFly (python) doesn't send CapsLock correctly.
+^!1::switchDesktopByNumber(1)
+^!2::switchDesktopByNumber(2)
+^!3::switchDesktopByNumber(3)
+^!4::switchDesktopByNumber(4)
+^!5::switchDesktopByNumber(5)
+^!6::switchDesktopByNumber(6)
+^!7::switchDesktopByNumber(7)
+^!8::switchDesktopByNumber(8)
+^!9::switchDesktopByNumber(9)
+
+^!n::switchDesktopToRight()
+^!p::switchDesktopToLeft()
+^!s::switchDesktopToRight()
+^!a::switchDesktopToLeft()
+^!tab::switchDesktopToLastOpened()
+
+^!c::createVirtualDesktop()
+^!d::deleteVirtualDesktop()
+
+^#1::MoveCurrentWindowToDesktop(1)
+^#2::MoveCurrentWindowToDesktop(2)
+^#3::MoveCurrentWindowToDesktop(3)
+^#4::MoveCurrentWindowToDesktop(4)
+^#5::MoveCurrentWindowToDesktop(5)
+^#6::MoveCurrentWindowToDesktop(6)
+^#7::MoveCurrentWindowToDesktop(7)
+^#8::MoveCurrentWindowToDesktop(8)
+^#9::MoveCurrentWindowToDesktop(9)
+
+; =======================================
+; ====== End of user configuration ======
+; =======================================
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
@@ -81,17 +155,19 @@ getSessionId()
 
 _switchDesktopToTarget(targetDesktop)
 {
+	; Globals variables should have been updated via updateGlobalVariables() prior to entering this function
     global CurrentDesktop, DesktopCount, LastOpenedDesktop
 
     ; Don't attempt to switch to an invalid desktop
-    if (targetDesktop > DesktopCount || targetDesktop < 1) {
+    if (targetDesktop > DesktopCount || targetDesktop < 1 || targetDesktop == CurrentDesktop) {
         OutputDebug, [invalid] target: %targetDesktop% current: %CurrentDesktop%
         return
     }
 
     LastOpenedDesktop := CurrentDesktop
-    
-    WinActivate, ahk_class Shell_TrayWnd ; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switchng sequence. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
+
+	; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switching sequence. This also fixes the flashing window button after switching in the taskbar. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
+    WinActivate, ahk_class Shell_TrayWnd
 
     ; Go right until we reach the desktop we want
     while(CurrentDesktop < targetDesktop) {
@@ -107,70 +183,44 @@ _switchDesktopToTarget(targetDesktop)
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
     }
 
+	; Makes the WinActivate fix less intrusive
     Sleep, 50
-    focusTheForemostWindow(targetDesktop) ; Makes the WinActivate fix less intrusive
+    focusTheForemostWindow(targetDesktop)
 }
 
-switchDesktopToRight()
+updateGlobalVariables() 
 {
-    global CurrentDesktop, DesktopCount
-
     ; Re-generate the list of desktops and where we fit in that. We do this because
     ; the user may have switched desktops via some other means than the script.
     mapDesktopsFromRegistry()
-
-    targetDesktop := CurrentDesktop + 1
-    if (targetDesktop > DesktopCount) {
-        targetDesktop := 1
-    }
-
-    _switchDesktopToTarget(targetDesktop)
-}
-
-switchDesktopToLeft()
-{
-    global CurrentDesktop, DesktopCount
-
-    ; Re-generate the list of desktops and where we fit in that. We do this because
-    ; the user may have switched desktops via some other means than the script.
-    mapDesktopsFromRegistry()
-
-    targetDesktop := CurrentDesktop - 1
-    if (targetDesktop < 1) {
-        targetDesktop := DesktopCount
-    }
-
-    _switchDesktopToTarget(targetDesktop)
-}
-
-;
-; This function switches to the desktop number provided.
-;
-switchDesktopToLastOpened()
-{
-    global CurrentDesktop, DesktopCount, LastOpenedDesktop
-
-    ; Re-generate the list of desktops and where we fit in that. We do this because
-    ; the user may have switched desktops via some other means than the script.
-    mapDesktopsFromRegistry()
-
-    targetDesktop := LastOpenedDesktop
-    if (targetDesktop = CurrentDesktop) {
-        return
-    }
-
-    _switchDesktopToTarget(targetDesktop)
 }
 
 switchDesktopByNumber(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
-
-    ; Re-generate the list of desktops and where we fit in that. We do this because
-    ; the user may have switched desktops via some other means than the script.
-    mapDesktopsFromRegistry()
-
+	updateGlobalVariables()
     _switchDesktopToTarget(targetDesktop)
+}
+
+switchDesktopToLastOpened()
+{
+    global CurrentDesktop, DesktopCount, LastOpenedDesktop
+    updateGlobalVariables()
+    _switchDesktopToTarget(LastOpenedDesktop)
+}
+
+switchDesktopToRight()
+{
+    global CurrentDesktop, DesktopCount
+    updateGlobalVariables()
+    _switchDesktopToTarget(CurrentDesktop == DesktopCount ? 1 : CurrentDesktop + 1)
+}
+
+switchDesktopToLeft()
+{
+    global CurrentDesktop, DesktopCount
+    updateGlobalVariables()
+    _switchDesktopToTarget(CurrentDesktop == 1 ? DesktopCount : CurrentDesktop - 1)
 }
 
 focusTheForemostWindow(targetDesktop) 
@@ -179,7 +229,7 @@ focusTheForemostWindow(targetDesktop)
     WinActivate, ahk_id %foremostWindowId%
 }
 
-getForemostWindowIdOnDesktop(n) 
+getForemostWindowIdOnDesktop(n)
 {
     n := n - 1 ; Desktops start at 0, while in script it's 1
 
@@ -195,6 +245,12 @@ getForemostWindowIdOnDesktop(n)
     }
 }
 
+MoveCurrentWindowToDesktop(desktopNumber) {
+	WinGet, activeHwnd, ID, A
+	DllCall(MoveWindowToDesktopNumberProc, UInt, activeHwnd, UInt, desktopNumber - 1)
+	switchDesktopByNumber(desktopNumber)
+}
+
 ;
 ; This function creates a new virtual desktop and switches to it
 ;
@@ -203,7 +259,7 @@ createVirtualDesktop()
     global CurrentDesktop, DesktopCount
     Send, #^d
     DesktopCount++
-    CurrentDesktop = %DesktopCount%
+    CurrentDesktop := DesktopCount
     OutputDebug, [create] desktops: %DesktopCount% current: %CurrentDesktop%
 }
 
@@ -221,49 +277,3 @@ deleteVirtualDesktop()
     CurrentDesktop--
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
 }
-
-; Main
-SetKeyDelay, 75
-mapDesktopsFromRegistry()
-OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
-
-; User config!
-; This section binds the key combo to the switch/create/delete actions
-CapsLock & 1::switchDesktopByNumber(1)
-CapsLock & 2::switchDesktopByNumber(2)
-CapsLock & 3::switchDesktopByNumber(3)
-CapsLock & 4::switchDesktopByNumber(4)
-CapsLock & 5::switchDesktopByNumber(5)
-CapsLock & 6::switchDesktopByNumber(6)
-CapsLock & 7::switchDesktopByNumber(7)
-CapsLock & 8::switchDesktopByNumber(8)
-CapsLock & 9::switchDesktopByNumber(9)
-
-CapsLock & n::switchDesktopToRight()
-CapsLock & p::switchDesktopToLeft()
-CapsLock & s::switchDesktopToRight()
-CapsLock & a::switchDesktopToLeft()
-CapsLock & tab::switchDesktopToLastOpened()
-
-CapsLock & c::createVirtualDesktop()
-CapsLock & d::deleteVirtualDesktop()
-
-; Alternate keys for this config. Adding these because DragonFly (python) doesn't send CapsLock correctly.
-^!1::switchDesktopByNumber(1)
-^!2::switchDesktopByNumber(2)
-^!3::switchDesktopByNumber(3)
-^!4::switchDesktopByNumber(4)
-^!5::switchDesktopByNumber(5)
-^!6::switchDesktopByNumber(6)
-^!7::switchDesktopByNumber(7)
-^!8::switchDesktopByNumber(8)
-^!9::switchDesktopByNumber(9)
-
-^!n::switchDesktopToRight()
-^!p::switchDesktopToLeft()
-^!s::switchDesktopToRight()
-^!a::switchDesktopToLeft()
-^!tab::switchDesktopToLastOpened()
-
-^!c::createVirtualDesktop()
-^!d::deleteVirtualDesktop()
