@@ -21,7 +21,7 @@ Note, on some windows (such as the ones you've run with Administrator privileges
         <CapsLock> + A or P     - Switch to virtual desktop on left (also, it cycles from the first to the last desktop)
         <CapsLock> + S or N     - Switch to virtual desktop on right (also, it cycles from the last to the first desktop)
 
-Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` tu switch to the Desktop 1, just as you would use `<CapsLock> + 1`)
+Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`)
 
 ## Custom Hotkeys
 To change the key mappings, modify the User Configuration section of the script and then reload (Right click the icon in the System Tray). Be sure to read about the [symbols AutoHotKey uses](https://autohotkey.com/docs/Hotkeys.htm) for custom key mapping.
