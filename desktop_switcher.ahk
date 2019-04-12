@@ -155,7 +155,7 @@ getSessionId()
 
 _switchDesktopToTarget(targetDesktop)
 {
-	; Globals variables should have been updated via updateGlobalVariables() prior to entering this function
+    ; Globals variables should have been updated via updateGlobalVariables() prior to entering this function
     global CurrentDesktop, DesktopCount, LastOpenedDesktop
 
     ; Don't attempt to switch to an invalid desktop
@@ -166,7 +166,7 @@ _switchDesktopToTarget(targetDesktop)
 
     LastOpenedDesktop := CurrentDesktop
 
-	; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switching sequence. This also fixes the flashing window button after switching in the taskbar. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
+    ; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switching sequence. This also fixes the flashing window button after switching in the taskbar. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
     WinActivate, ahk_class Shell_TrayWnd
 
     ; Go right until we reach the desktop we want
@@ -183,7 +183,7 @@ _switchDesktopToTarget(targetDesktop)
         OutputDebug, [left] target: %targetDesktop% current: %CurrentDesktop%
     }
 
-	; Makes the WinActivate fix less intrusive
+    ; Makes the WinActivate fix less intrusive
     Sleep, 50
     focusTheForemostWindow(targetDesktop)
 }
@@ -198,7 +198,7 @@ updateGlobalVariables()
 switchDesktopByNumber(targetDesktop)
 {
     global CurrentDesktop, DesktopCount
-	updateGlobalVariables()
+    updateGlobalVariables()
     _switchDesktopToTarget(targetDesktop)
 }
 
@@ -246,9 +246,9 @@ getForemostWindowIdOnDesktop(n)
 }
 
 MoveCurrentWindowToDesktop(desktopNumber) {
-	WinGet, activeHwnd, ID, A
-	DllCall(MoveWindowToDesktopNumberProc, UInt, activeHwnd, UInt, desktopNumber - 1)
-	switchDesktopByNumber(desktopNumber)
+    WinGet, activeHwnd, ID, A
+    DllCall(MoveWindowToDesktopNumberProc, UInt, activeHwnd, UInt, desktopNumber - 1)
+    switchDesktopByNumber(desktopNumber)
 }
 
 ;
