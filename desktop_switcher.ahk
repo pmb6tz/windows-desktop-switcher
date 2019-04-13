@@ -1,3 +1,4 @@
+#SingleInstance Force ; The script will Reload if launched while already running
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 
@@ -16,73 +17,8 @@ SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
 
-; ================================
-; ====== User configuration ======
-; ================================
-; This section binds the key combo to the switch/create/delete actions
-CapsLock & 1::switchDesktopByNumber(1)
-CapsLock & 2::switchDesktopByNumber(2)
-CapsLock & 3::switchDesktopByNumber(3)
-CapsLock & 4::switchDesktopByNumber(4)
-CapsLock & 5::switchDesktopByNumber(5)
-CapsLock & 6::switchDesktopByNumber(6)
-CapsLock & 7::switchDesktopByNumber(7)
-CapsLock & 8::switchDesktopByNumber(8)
-CapsLock & 9::switchDesktopByNumber(9)
-
-CapsLock & n::switchDesktopToRight()
-CapsLock & p::switchDesktopToLeft()
-CapsLock & s::switchDesktopToRight()
-CapsLock & a::switchDesktopToLeft()
-CapsLock & tab::switchDesktopToLastOpened()
-
-CapsLock & c::createVirtualDesktop()
-CapsLock & d::deleteVirtualDesktop()
-
-CapsLock & q::MoveCurrentWindowToDesktop(1)
-CapsLock & w::MoveCurrentWindowToDesktop(2)
-CapsLock & e::MoveCurrentWindowToDesktop(3)
-CapsLock & r::MoveCurrentWindowToDesktop(4)
-CapsLock & t::MoveCurrentWindowToDesktop(5)
-CapsLock & y::MoveCurrentWindowToDesktop(6)
-CapsLock & u::MoveCurrentWindowToDesktop(7)
-CapsLock & i::MoveCurrentWindowToDesktop(8)
-CapsLock & o::MoveCurrentWindowToDesktop(9)
-
-
-; Alternate keys for this config. Adding these because DragonFly (python) doesn't send CapsLock correctly.
-^!1::switchDesktopByNumber(1)
-^!2::switchDesktopByNumber(2)
-^!3::switchDesktopByNumber(3)
-^!4::switchDesktopByNumber(4)
-^!5::switchDesktopByNumber(5)
-^!6::switchDesktopByNumber(6)
-^!7::switchDesktopByNumber(7)
-^!8::switchDesktopByNumber(8)
-^!9::switchDesktopByNumber(9)
-
-^!n::switchDesktopToRight()
-^!p::switchDesktopToLeft()
-^!s::switchDesktopToRight()
-^!a::switchDesktopToLeft()
-^!tab::switchDesktopToLastOpened()
-
-^!c::createVirtualDesktop()
-^!d::deleteVirtualDesktop()
-
-^#1::MoveCurrentWindowToDesktop(1)
-^#2::MoveCurrentWindowToDesktop(2)
-^#3::MoveCurrentWindowToDesktop(3)
-^#4::MoveCurrentWindowToDesktop(4)
-^#5::MoveCurrentWindowToDesktop(5)
-^#6::MoveCurrentWindowToDesktop(6)
-^#7::MoveCurrentWindowToDesktop(7)
-^#8::MoveCurrentWindowToDesktop(8)
-^#9::MoveCurrentWindowToDesktop(9)
-
-; =======================================
-; ====== End of user configuration ======
-; =======================================
+#Include user_config.ahk
+return
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
