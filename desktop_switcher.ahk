@@ -3,6 +3,8 @@
 #KeyHistory 0 ; Ensures user privacy when debugging is not needed
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability
+DetectHiddenWindows, On
+SetKeyDelay, 75
 
 ; Globals
 DesktopCount := 2        ; Windows starts with 2 desktops at boot
@@ -19,15 +21,40 @@ global UnPinWindowProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor
 global IsPinnedAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsPinnedApp", "Ptr")
 global PinAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "PinApp", "Ptr")
 global UnPinAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "UnPinApp", "Ptr")
+global RegisterPostMessageHookProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "RegisterPostMessageHook", "Ptr")
 
+; Setup onDesktopChangeHook
+hwnd := WinExist("ahk_pid " . DllCall("GetCurrentProcessId","Uint"))
+hwnd += 0x1000 << 32
+DllCall(RegisterPostMessageHookProc, Int, hwnd, Int, 0x1400 + 30)
+OnMessage(0x1400 + 30, "onDesktopChangeHook")
 
 ; Main
-SetKeyDelay, 75
 mapDesktopsFromRegistry()
+updateTrayIcon()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
-
 #Include user_config.ahk
 return
+
+updateTrayIcon() {
+	global CurrentDesktop
+	if (FileExist("./icons/" . CurrentDesktop ".ico")) {
+	    Menu, Tray, Icon, icons/%CurrentDesktop%.ico
+	}
+	else {
+	    Menu, Tray, Icon, icons/+.ico
+	}
+}
+
+onDesktopChangeHook() {
+	updateGlobalVariables()
+	updateTrayIcon()
+}
+
+desktopChangeCallback(wParam, lParam, msg, hwnd) {
+	updateGlobalVariables()
+	updateTrayIcon()
+}
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
