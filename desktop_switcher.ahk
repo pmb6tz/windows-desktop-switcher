@@ -13,6 +13,13 @@ LastOpenedDesktop := 1
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\virtual-desktop-accessor.dll", "Ptr")
 global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsWindowOnDesktopNumber", "Ptr")
 global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "MoveWindowToDesktopNumber", "Ptr")
+global IsPinnedWindowProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsPinnedWindow", "Ptr")
+global PinWindowProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "PinWindow", "Ptr")
+global UnPinWindowProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "UnPinWindow", "Ptr")
+global IsPinnedAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsPinnedApp", "Ptr")
+global PinAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "PinApp", "Ptr")
+global UnPinAppProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "UnPinApp", "Ptr")
+
 
 ; Main
 SetKeyDelay, 75
@@ -183,7 +190,7 @@ getForemostWindowIdOnDesktop(n)
     }
 }
 
-MoveCurrentWindowToDesktop(desktopNumber) {
+moveCurrentWindowToDesktop(desktopNumber) {
     WinGet, activeHwnd, ID, A
     DllCall(MoveWindowToDesktopNumberProc, UInt, activeHwnd, UInt, desktopNumber - 1)
     switchDesktopByNumber(desktopNumber)
@@ -214,4 +221,68 @@ deleteVirtualDesktop()
     DesktopCount--
     CurrentDesktop--
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
+}
+
+getCurrentWindowID() {
+    WinGet, activeHwnd, ID, A
+    return activeHwnd
+}
+
+getCurrentWindowTitle() {
+    WinGetTitle, activeHwnd, A
+    return activeHwnd
+}
+
+togglePinWindowOnTop()
+{
+	showMessage(getCurrentWindowTitle(), "Toggled Pin on top of other windows")
+	Winset, Alwaysontop, , A
+}
+
+togglePinWindowOnAllDesktops()
+{
+    windowID := getCurrentWindowID()
+    windowTitle := getCurrentWindowTitle()
+    if (DllCall(IsPinnedWindowProc, UInt, windowID)) {
+        DllCall(UnPinWindowProc, UInt, windowID)
+        showMessage(windowTitle, "Unpinned window on all desktops")
+    }
+    else {
+        DllCall(PinWindowProc, UInt, windowID)
+        showMessage(windowTitle, "Pinned window on all desktops")
+    }
+}
+
+togglePinAppOnAllDesktops()
+{
+    windowID := getCurrentWindowID()
+    windowTitle := getCurrentWindowTitle()
+    if (DllCall(IsPinnedAppProc, UInt, windowID)) {
+        DllCall(UnPinAppProc, UInt, windowID)
+        showMessage(windowTitle, "Unpinned app on all desktops")
+    }
+    else {
+        DllCall(PinAppProc, UInt, windowID)
+        showMessage(windowTitle, "Pinned app on all desktops")
+    }
+}
+
+truncateString(string:="", n:=100) {
+    return (StrLen(string) > n ? SubStr(string, 1, n-3) . "..." : string)
+}
+
+showMessage(txt, title:="") {
+    hideMessage()
+    title := truncateString(title)
+    txt := truncateString(txt)
+    TrayTip, %title%, %txt%, 1
+}
+
+hideMessage() {
+    TrayTip  ; Attempt to hide it the normal way.
+    if SubStr(A_OSVersion,1,3) = "10." {
+        Menu Tray, NoIcon
+        Sleep 200  ; In case of defects, it may be necessary to adjust the value
+        Menu Tray, Icon
+    }
 }
