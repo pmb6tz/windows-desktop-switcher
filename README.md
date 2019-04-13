@@ -18,6 +18,11 @@ Note, CapsLock will function normally even when using it as a modifier.
         <CapsLock> + D          - Delete the current virtual desktop
         <CapsLock> + A or P     - Switch to virtual desktop on left (also, it cycles from the first to the last desktop)
         <CapsLock> + S or N     - Switch to virtual desktop on right (also, it cycles from the last to the first desktop)
+        <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1
+        <CapsLock> + <Letter>   - Moves the current window to another desktop, then switches to it. 
+                                  Use letters Q, W, E, R, T, Y, U, I, O.
+                                  (e.g. <CapsLock> + <Q> moves to the first desktop
+                                  	    <CapsLock> + <W> moves to the second desktop, etc.)
 
 Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`)
 
