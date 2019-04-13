@@ -1,5 +1,5 @@
 # windows-desktop-switcher
-An AutoHotKey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num> or other custom key combination. It also provides other features, such as creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
+An AutoHotkey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num> or other custom key combination. It also provides other features, such as creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
 
 ## Overview
 This script creates more convenient hotkeys for switching virtual desktops in Windows 10. I built this to better mirror
@@ -9,7 +9,7 @@ hotkey support for this feature (for instance, there's no way to go directly to 
 Note, CapsLock will function normally even when using it as a modifier.
 
 ## Running
-[Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotKey if prompted). 
+[Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). 
 
 ## Default Hotkeys
         <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1
@@ -35,7 +35,7 @@ To change the key mappings, modify the `user_config.ahk` script and then run `de
 CapsLock & n::switchDesktopToRight()   <- <CapsLock> + <N> will switch to the next desktop (& is necessary when using non-modifier key such as CapsLock)
 ```
 
-For more detailed description of hotkeys check out [AutoHotKey docs](https://autohotkey.com/docs/Hotkeys.htm).
+For more detailed description of hotkeys check out [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).
 
 ## Running on boot
 
