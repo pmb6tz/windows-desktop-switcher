@@ -2,9 +2,7 @@
 An AutoHotkey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num> or other custom key combination. It also provides other features, such as creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
 
 ## Overview
-This script creates more convenient hotkeys for switching virtual desktops in Windows 10. I built this to better mirror
-the mapping I use on linux (with dwm), and it's always annoyed me that Windows does not have better
-hotkey support for this feature (for instance, there's no way to go directly to a desktop by number).
+This script creates more convenient hotkeys for switching virtual desktops in Windows 10. I built this to better mirror the mapping I use on linux (with dwm), and it's always annoyed me that Windows does not have better hotkey support for this feature (for instance, there's no way to go directly to a desktop by number).
 
 Note, CapsLock will function normally even when using it as a modifier.
 
@@ -16,8 +14,8 @@ Note, CapsLock will function normally even when using it as a modifier.
         <CapsLock> + Tab        - Switches back to the last desktop used
         <CapsLock> + C          - Create a new virtual desktop
         <CapsLock> + D          - Delete the current virtual desktop
-        <CapsLock> + A or P     - Switch to virtual desktop on left (also, it cycles from the first to the last desktop)
-        <CapsLock> + S or N     - Switch to virtual desktop on right (also, it cycles from the last to the first desktop)
+        <CapsLock> + A or P     - Switch to virtual desktop on left (also cycles from the first to the last desktop)
+        <CapsLock> + S or N     - Switch to virtual desktop on right (also cycles from the last to the first desktop)
         <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1
         <CapsLock> + <Letter>   - Moves the current window to another desktop, then switches to it. 
                                   Use letters Q, W, E, R, T, Y, U, I, O.
@@ -27,11 +25,11 @@ Note, CapsLock will function normally even when using it as a modifier.
 Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`)
 
 ## Customizing Hotkeys
-To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` is button `Alt`, `+` is `Shift`, `#` is `Win`, `^` is `Ctrl`. The syntax of the config file is `HOTKEY::ACTION`. Here are some of the examples of customization options. 
+To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` corresponds to `Alt`, `+` is `Shift`, `#` is `Win`, and `^` is `Ctrl`. The syntax of the config file is `HOTKEY::ACTION`. Here are some of the examples of customization options. 
 
 ```
-!n::switchDesktopToRight()             <- <Alt> + <N> will switch to the next desktop (to the right of the current one)
-#!space::switchDesktopToRight()        <- <Win> + <Alt> + <Space> will switch to next desktop
+!n::switchDesktopToRight()             <- <Alt> + <N> will switch to the desktop on the right
+#!space::switchDesktopToRight()        <- <Win> + <Alt> + <Space> will switch to the desktop on the right
 CapsLock & n::switchDesktopToRight()   <- <CapsLock> + <N> will switch to the next desktop (& is necessary when using non-modifier key such as CapsLock)
 ```
 
@@ -48,20 +46,24 @@ You can make the script run on every boot with either of these methods.
 
 ### Advanced (Administrator method)
 
-In Windows OS, some windows (such as the ones you've run with Administrator privileges, also terminals) the hotkeys will only work if the script itself is `Run as Administrator`, due to the way Windows is designed.
+Windows prevents hotkeys from working in windows that were launched with higher elevation than the AutoHotKey script (such as CMD or Powershell terminals that were launched as Administrator). As a result, Windows Desktop Switcher hotkeys will only work within these windows if the script itself is `Run as Administrator`, due to the way Windows is designed. 
 
-1. In the script folder, create file `desktop_switcher_admin.vbs` with contents
+You can do this by creating a scheduled task to invoke the script at logon. You may use 'Task Scheduler', or create the task in powershell as demonstrated.
 ```
-Set WshShell = CreateObject("WScript.Shell" ) 
-WshShell.Run """desktop_switcher.ahk""", 0 
-Set WshShell = Nothing
-```
-2. Press `Win + R`, enter `shell:startup`, press `OK`
-3. Create a shortcut to `desktop_switcher_admin.vbs` here
+# Run the following commands in an Administrator powershell prompt. 
+# Be sure to specify the correct path to your desktop_switcher.ahk file. 
 
-Instead of the above method, you can also use Windows Task Scheduler to run the script as Administrator on boot.
+$A = New-ScheduledTaskAction -Execute "PATH\TO\desktop_switcher.ahk"
+$T = New-ScheduledTaskTrigger -AtLogon
+$P = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
+$S = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0
+$D = New-ScheduledTask -Action $A -Principal $P -Trigger $T -Settings $S
+Register-ScheduledTask WindowsDesktopSwitcher -InputObject $D
+```
+
+The task is now registered and will run on the next logon, and can be viewed or modified in 'Task Scheduler'. 
 
 ## Other
 To see debug messages, download [SysInternals DebugView](https://technet.microsoft.com/en-us/sysinternals/debugview).
 
-To keep high-performance and robustness, this script is intended to be lightweight. For more advanced features (such as having different wallpapers on different desktops) check out https://github.com/sdias/win-10-virtual-desktop-enhancer
+This script is intended to be lightweight in order to prioritize performance and robustness. For more advanced features (such as configuring different wallpapers on different desktops) check out https://github.com/sdias/win-10-virtual-desktop-enhancer.
