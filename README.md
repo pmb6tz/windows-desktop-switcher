@@ -27,7 +27,7 @@ Note, CapsLock will function normally even when using it as a modifier.
 Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`)
 
 ## Customizing Hotkeys
-To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Here are some of the examples of customization options. Please note, `!` is button `Alt`, `+` is `Shift`, `#` is `Win`, `^` is `Ctrl`. Then syntax of the config file is `HOTKEY::ACTION`.
+To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` is button `Alt`, `+` is `Shift`, `#` is `Win`, `^` is `Ctrl`. The syntax of the config file is `HOTKEY::ACTION`. Here are some of the examples of customization options. 
 
 ```
 !n::switchDesktopToRight()             <- <Alt> + <N> will switch to the next desktop (to the right of the current one)
