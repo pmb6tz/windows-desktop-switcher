@@ -6,6 +6,9 @@ This script creates more convenient hotkeys for switching virtual desktops in Wi
 
 Note, CapsLock will function normally even when using it as a modifier.
 
+## Issues on Windows 1809/1903 Updates
+This project now relies on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor). This binary is included in this repository for convenience, and was recently updated to work with the 1809/1903 updates. This may cause instability for users running older versions of Windows. If this is the case, head over to the DLL project page and replace VirtualDesktopAccessor.dll with an older version.
+
 ## Running
 [Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). 
 
