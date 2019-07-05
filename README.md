@@ -6,8 +6,12 @@ This script creates more convenient hotkeys for switching virtual desktops in Wi
 
 Note, CapsLock will function normally even when using it as a modifier.
 
-## Issues on Windows 1809/1903 Updates
-This project now relies on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor). This binary is included in this repository for convenience, and was recently updated to work with the 1809/1903 updates. This may cause instability for users running older versions of Windows. If this is the case, head over to the DLL project page and replace VirtualDesktopAccessor.dll with an older version.
+## Issues on Windows ≥1809/1903 Updates
+This project relies partly on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor) (for moving windows to other desktops). This binary is included in this repository for convenience, and was recently updated to work with the ≥1809/1903 updates. 
+
+This may cause instability for users running older versions of Windows. If this is the case, [download the older DLL](https://github.com/pmb6tz/windows-desktop-switcher/blob/5289a0968179638f6e946a4cb69723510abd0d19/virtual-desktop-accessor.dll), rename it to `VirtualDesktopAccessor.dll`, and overwrite the previous DLL.
+
+If a future Windows Update breaks the DLL again and updating your files from this repository doesn't work, you could try [building the DLL yourself](https://github.com/Ciantic/VirtualDesktopAccessor) (given that it was since updated by its' creators).
 
 ## Running
 [Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). 
@@ -65,6 +69,10 @@ Register-ScheduledTask WindowsDesktopSwitcher -InputObject $D
 ```
 
 The task is now registered and will run on the next logon, and can be viewed or modified in 'Task Scheduler'. 
+
+## Credits
+
+- Thanks to [Ciantic/VirtualDesktopAccessor](https://github.com/Ciantic/VirtualDesktopAccessor) (for the DLL) and [sdias/win-10-virtual-desktop-enhancer](https://github.com/sdias/win-10-virtual-desktop-enhancer) (for the DLL usage samples) our code can move windows between desktops.
 
 ## Other
 To see debug messages, download [SysInternals DebugView](https://technet.microsoft.com/en-us/sysinternals/debugview).
