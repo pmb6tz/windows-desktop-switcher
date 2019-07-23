@@ -38,8 +38,10 @@ To change the key mappings, modify the `user_config.ahk` script and then run `de
 !n::switchDesktopToRight()             <- <Alt> + <N> will switch to the desktop on the right
 #!space::switchDesktopToRight()        <- <Win> + <Alt> + <Space> will switch to the desktop on the right
 CapsLock & n::switchDesktopToRight()   <- <CapsLock> + <N> will switch to the next desktop (& is necessary when using non-modifier key such as CapsLock)
+^space::send, #{tab}                   <- <Ctrl> + <Space> will open Desktop Manager by sending <Win> + <Tab>
 ```
 
+You can find the explanation for the `Ctrl` + `Space` command [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).
 For more detailed description of hotkeys check out [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).
 
 ## Running on boot
