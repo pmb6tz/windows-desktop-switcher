@@ -6,7 +6,7 @@ This script creates more convenient hotkeys for switching virtual desktops in Wi
 
 Note, CapsLock will function normally even when using it as a modifier.
 
-## Issues on Windows ≥1809/1903 Updates
+## Issues on Windows 1809/1903≤ Updates
 This project relies partly on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor) (for moving windows to other desktops). This binary is included in this repository for convenience, and was recently updated to work with the ≥1809/1903 updates. 
 
 This may cause instability for users running older versions of Windows. If this is the case, [download the older DLL](https://github.com/pmb6tz/windows-desktop-switcher/blob/5289a0968179638f6e946a4cb69723510abd0d19/virtual-desktop-accessor.dll), rename it to `VirtualDesktopAccessor.dll`, and overwrite the previous DLL.
