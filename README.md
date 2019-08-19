@@ -29,7 +29,7 @@ If a future Windows Update breaks the DLL again and updating your files from thi
                                   (e.g. <CapsLock> + <Q> moves to the first desktop
                                   	    <CapsLock> + <W> moves to the second desktop, etc.)
 
-Using `Ctrl + Alt` instead of `CapsLock` also works, without any additional changes necessary (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`). If you'd like, you can [disable this](https://github.com/pmb6tz/windows-desktop-switcher/issues/44).
+If you'd like, you can [enable the alternate configuration](https://github.com/pmb6tz/windows-desktop-switcher/issues/44), to use `<Ctrl> + <Alt>` instead of `<CapsLock>` (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`).
 
 ## Customizing Hotkeys
 To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` corresponds to `Alt`, `+` is `Shift`, `#` is `Win`, and `^` is `Ctrl`. The syntax of the config file is `HOTKEY::ACTION`. Here are some of the examples of customization options. 
