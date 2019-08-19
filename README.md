@@ -17,13 +17,12 @@ If a future Windows Update breaks the DLL again and updating your files from thi
 [Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). 
 
 ## Default Hotkeys
-        <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1
+        <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + <1> (you can also use the Numpad)
         <CapsLock> + Tab        - Switches back to the last desktop used
         <CapsLock> + C          - Create a new virtual desktop
         <CapsLock> + D          - Delete the current virtual desktop
         <CapsLock> + A or P     - Switch to virtual desktop on left (also cycles from the first to the last desktop)
         <CapsLock> + S or N     - Switch to virtual desktop on right (also cycles from the last to the first desktop)
-        <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1
         <CapsLock> + <Letter>   - Moves the current window to another desktop, then switches to it. 
                                   Use letters Q, W, E, R, T, Y, U, I, O.
                                   (e.g. <CapsLock> + <Q> moves to the first desktop
