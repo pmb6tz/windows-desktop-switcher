@@ -41,7 +41,7 @@ CapsLock & n::switchDesktopToRight()   <- <CapsLock> + <N> will switch to the ne
 ^space::send, #{tab}                   <- <Ctrl> + <Space> will open Desktop Manager by sending <Win> + <Tab>
 ```
 
-You can find the explanation for the Desktop Manager hotkey [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).
+After any changes to the configuration the program needs to be closed and opened again. You can find the explanation for the Desktop Manager hotkey [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).
 For more detailed description of hotkeys check out [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).
 
 ## Running on boot
