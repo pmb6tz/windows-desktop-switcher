@@ -164,7 +164,10 @@ switchDesktopToLeft()
 focusTheForemostWindow(targetDesktop) 
 {
     foremostWindowId := getForemostWindowIdOnDesktop(targetDesktop)
-    WinActivate, ahk_id %foremostWindowId%
+    WinGet MMX, MinMax, ahk_id %foremostWindowId%
+    If (MMX != -1) {
+        WinActivate, ahk_id %foremostWindowId%
+    }
 }
 
 getForemostWindowIdOnDesktop(n)
