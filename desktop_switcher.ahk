@@ -161,13 +161,16 @@ switchDesktopToLeft()
     _switchDesktopToTarget(CurrentDesktop == 1 ? DesktopCount : CurrentDesktop - 1)
 }
 
-focusTheForemostWindow(targetDesktop) 
-{
+focusTheForemostWindow(targetDesktop) {
     foremostWindowId := getForemostWindowIdOnDesktop(targetDesktop)
-    WinGet MMX, MinMax, ahk_id %foremostWindowId%
-    If (MMX != -1) {
+    if isWindowNonMinimized(foremostWindowId) {
         WinActivate, ahk_id %foremostWindowId%
     }
+}
+
+isWindowNonMinimized(windowId) {
+    WinGet MMX, MinMax, ahk_id %windowId%
+    return MMX != -1
 }
 
 getForemostWindowIdOnDesktop(n)
