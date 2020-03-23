@@ -1,5 +1,5 @@
 # windows-desktop-switcher
-An AutoHotkey script for Windows that lets a user change virtual desktops by pressing CapsLock + &lt;num> or other custom key combination. It also provides other features, such as creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
+An AutoHotkey script for Windows that lets a user change virtual desktops by pressing <kbd>CapsLock</kbd> and the number row at the sime time (e.g. <kbd>CapsLock</kbd> + <kbd>2</kbd>). It also provides other features, such as customizing the key combinations, creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
 
 ## Overview
 This script creates more convenient hotkeys for switching virtual desktops in Windows 10. I built this to better mirror the mapping I use on linux (with dwm), and it's always annoyed me that Windows does not have better hotkey support for this feature (for instance, there's no way to go directly to a desktop by number).
@@ -17,31 +17,33 @@ If a future Windows Update breaks the DLL again and updating your files from thi
 [Install AutoHotkey](https://autohotkey.com/download/) v1.1 or later, then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). You can disable the switching animation by opening "Adjust the appearance and performance of Windows" and then unselecting the checkmark "Animate windows when minimizing and maximizing".
 
 ## Default Hotkeys
-        <CapsLock> + <Num>      - Switches to virtual desktop "num", e.g. <CapsLock> + 1 (you can also use the Numpad)
-        <CapsLock> + Tab        - Switches back to the last desktop used
-        <CapsLock> + C          - Create a new virtual desktop
-        <CapsLock> + D          - Delete the current virtual desktop
-        <CapsLock> + A or P     - Switch to virtual desktop on left (also cycles from the first to the last desktop)
-        <CapsLock> + S or N     - Switch to virtual desktop on right (also cycles from the last to the first desktop)
-        <CapsLock> + <Letter>   - Moves the current window to another desktop, then switches to it. 
-                                  Use letters Q, W, E, R, T, Y, U, I, O.
-                                  (e.g. <CapsLock> + Q moves to the first desktop
-                                  	    <CapsLock> + W moves to the second desktop, etc.)
 
-If you'd like, you can [enable the alternate configuration](https://github.com/pmb6tz/windows-desktop-switcher/issues/44), to use `<Ctrl> + <Alt>` instead of `<CapsLock>` (e.g. use `<Ctrl> + <Alt> + 1` to switch to the Desktop 1, just as you would use `<CapsLock> + 1`).
+Action | Keys 
+--- | :-:
+**Switch** to virtual desktop **1, 2, etc.**<br>*(you can also use the Numpad)*|<kbd>CapsLock</kbd> + <kbd>1</kbd><br><kbd>CapsLock</kbd> + <kbd>2</kbd><br>...
+**Switch back** to the last desktop used|<kbd>CapsLock</kbd> + <kbd>Tab</kbd>
+**Switch** to the virtual desktop on the **left**<br>*(auto-cycles from the first to the last desktop)*|<kbd>CapsLock</kbd> + <kbd>A</kbd><br><kbd>CapsLock</kbd> + <kbd>P</kbd>
+**Switch** to the virtual desktop on the **right**<br>*(auto-cycles from the last to the first desktop)*|<kbd>CapsLock</kbd> + <kbd>S</kbd><br><kbd>CapsLock</kbd> + <kbd>N</kbd>
+**Create** a new virtual desktop|**<kbd>CapsLock</kbd> + <kbd>C</kbd>**
+**Delete** the current virtual desktop|<kbd>CapsLock</kbd> + <kbd>D</kbd>
+**Move** the current window to another desktop, then switch to it<br>*Keys <kbd>Q</kbd>, <kbd>W</kbd>, etc. correspond to 1st, 2nd, etc. desktops*|<kbd>CapsLock</kbd> + <kbd>Q</kbd><br><kbd>CapsLock</kbd> + <kbd>W</kbd><br>...
+
+If you'd like, you can [enable the alternate configuration](https://github.com/pmb6tz/windows-desktop-switcher/issues/44), to use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> as hotkey combination keys instead of <kbd>CapsLock</kbd> (e.g. use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1</kbd> to switch to the Desktop 1, just as you would use <kbd>CapsLock</kbd> + <kbd>1</kbd>).
 
 ## Customizing Hotkeys
 To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` corresponds to `Alt`, `+` is `Shift`, `#` is `Win`, and `^` is `Ctrl`. The syntax of the config file is `HOTKEY::ACTION`. Here are some of the examples of customization options. 
 
-```
-!n::switchDesktopToRight()             <- <Alt> + <N> will switch to the desktop on the right
-#!space::switchDesktopToRight()        <- <Win> + <Alt> + <Space> will switch to the desktop on the right
-CapsLock & n::switchDesktopToRight()   <- <CapsLock> + <N> will switch to the next desktop (& is necessary when using non-modifier key such as CapsLock)
-^space::send, #{tab}                   <- <Ctrl> + <Space> will open Desktop Manager by sending <Win> + <Tab>
-```
+Single line of code example | Meaning
+--- | ---
+`!n::switchDesktopToRight()`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Hotkey:** <kbd>Alt</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right
+`#!space::switchDesktopToRight()` | **Hotkey:** <kbd>Win</kbd> + <kbd>Alt</kbd> + <kbd>Space</kbd><br>**Action:** Switch to the desktop on the right
+`CapsLock & n::switchDesktopToRight()` | **Hotkey:** <kbd>Capslock</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right<br>*(& is necessary when using a non-modifier key such as Capslock)*
+`!n::switchDesktopToRight()` | **Hotkey:** <kbd>Alt</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right
+`^space::send, #{tab} ` | **Hotkey:** <kbd>Ctrl</kbd> + <kbd>Space</kbd><br>**Action:** Open Desktop Manager by sending <kbd>Win</kbd> + <kbd>Tab</kbd>
 
-After any changes to the configuration the program needs to be closed and opened again. You can find the explanation for the Desktop Manager hotkey [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).
-For more detailed description of hotkeys check out [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).
+A more detailed description of hotkeys can be found here: [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).<br>
+You can find the explanation for the Desktop Manager hotkey [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).<br>
+After any changes to the configuration the program needs to be closed and opened again.
 
 ## Running on boot
 
@@ -49,7 +51,7 @@ You can make the script run on every boot with either of these methods.
 
 ### Simple (Non-administrator method)
 
-1. Press `Win + R`, enter `shell:startup`, press `OK`
+1. Press <kbd>Win</kbd> + <kbd>R</kbd>, enter `shell:startup`, then click <kbd>OK</kbd>
 2. Create a shortcut to the `desktop_switcher.ahk` file here
 
 ### Advanced (Administrator method)
