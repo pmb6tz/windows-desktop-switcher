@@ -79,6 +79,12 @@ Register-ScheduledTask WindowsDesktopSwitcher -InputObject $D
 
 The task is now registered and will run on the next logon, and can be viewed or modified in 'Task Scheduler'. 
 
+## Q&A
+
+##### How to prevent cycling of desktop switching when end desktop or start desktop is reached?
+
+Solution is described in [#66](https://github.com/pmb6tz/windows-desktop-switcher/issues/66#issuecomment-741793147).
+
 ## Credits
 
 - Thanks to [Ciantic/VirtualDesktopAccessor](https://github.com/Ciantic/VirtualDesktopAccessor) (DLL) and [sdias/win-10-virtual-desktop-enhancer](https://github.com/sdias/win-10-virtual-desktop-enhancer) (DLL usage samples), our code can now move windows between desktops.
