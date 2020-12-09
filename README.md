@@ -81,7 +81,7 @@ The task is now registered and will run on the next logon, and can be viewed or 
 
 ## Q&A
 
-##### How to prevent cycling of desktop switching when end desktop or start desktop is reached?
+#### How to prevent cycling of desktop switching when end desktop or start desktop is reached?
 
 Solution is described in [#66](https://github.com/pmb6tz/windows-desktop-switcher/issues/66#issuecomment-741793147).
 
