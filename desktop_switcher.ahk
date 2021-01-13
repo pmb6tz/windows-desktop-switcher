@@ -9,6 +9,9 @@ DesktopCount := 2        ; Windows starts with 2 desktops at boot
 CurrentDesktop := 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
 LastOpenedDesktop := 1
 
+DesktopMiniCount := -1   ; keep desktop mini count at script boot.
+DesktopInitSwitchTarget := -1 ; switch desktop to target number at script boot.
+
 ; DLL
 hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\VirtualDesktopAccessor.dll", "Ptr")
 global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsWindowOnDesktopNumber", "Ptr")
@@ -18,6 +21,9 @@ global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualD
 SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
+
+initDesktopMiniCount()
+initDesktopSwitchTargetNumber()
 
 #Include %A_ScriptDir%\user_config.ahk
 return
@@ -220,4 +226,23 @@ deleteVirtualDesktop()
     DesktopCount--
     CurrentDesktop--
     OutputDebug, [delete] desktops: %DesktopCount% current: %CurrentDesktop%
+}
+
+initDesktopMiniCount()
+{
+	global DeskTopMiniCount, DesktopCount, CurrentDesktop
+	i := DeskTopMiniCount - DesktopCount
+ 	while (i-- > 0){
+ 		createVirtualDesktop()
+ 		OutputDebug, [initCount] DeskTopMiniCount: %DeskTopMiniCount% desktops: %DesktopCount% current: %CurrentDesktop%
+ 	}
+}
+
+initDesktopSwitchTargetNumber()
+{
+    global DesktopInitSwitchTarget, DesktopCount, CurrentDesktop
+    if(DesktopInitSwitchTarget > 0 && CurrentDesktop != DesktopInitSwitchTarget){
+          _switchDesktopToTarget(DesktopInitSwitchTarget > DesktopCount ? DesktopCount : DesktopInitSwitchTarget)
+          OutputDebug, [initTarget] DesktopInitSwitchTarget: %DesktopInitSwitchTarget% desktops: %DesktopCount% current: %CurrentDesktop%
+    }
 }

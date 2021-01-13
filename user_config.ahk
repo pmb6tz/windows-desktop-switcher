@@ -113,3 +113,9 @@ CapsLock & o::MoveCurrentWindowToDesktop(9)
 ; ^#Numpad7::MoveCurrentWindowToDesktop(7)
 ; ^#Numpad8::MoveCurrentWindowToDesktop(8)
 ; ^#Numpad9::MoveCurrentWindowToDesktop(9)
+
+; Vim-like key config . If use this, suggest config DesktopMiniCount=4, DesktopInitSwitchTarget as well
+; ^#j::switchDesktopByNumber(1)
+; ^#k::switchDesktopByNumber(2)
+; ^#l::switchDesktopByNumber(3)
+; ^#i::switchDesktopByNumber(4)
