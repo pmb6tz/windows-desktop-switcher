@@ -15,7 +15,7 @@ Action | Keys
 **Delete** the current virtual desktop|<kbd>CapsLock</kbd> + <kbd>D</kbd>
 **Move** the current window to another desktop, then switch to it<br>*Keys <kbd>Q</kbd>, <kbd>W</kbd>, etc. correspond to **1st, 2nd, etc.** desktops*|<kbd>CapsLock</kbd> + <kbd>Q</kbd><br><kbd>CapsLock</kbd> + <kbd>W</kbd><br>...<br><kbd>CapsLock</kbd> + <kbd>O</kbd>
 
-Note, <kbd>CapsLock</kbd> continues to function normally even when it is used as a modifier. [But you can change its' behavior or disable it altogether](https://github.com/pmb6tz/windows-desktop-switcher/issues/67).
+Note, <kbd>CapsLock</kbd> continues to function normally even when it is used as a modifier. [But you can make the button do more useful things such as open overview, or disable it altogether](https://github.com/pmb6tz/windows-desktop-switcher/issues/67).
 
 If you'd like, you can [enable the alternate configuration](https://github.com/pmb6tz/windows-desktop-switcher/issues/44), to use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> as hotkey combination keys instead of <kbd>CapsLock</kbd> (e.g. use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1</kbd> to switch to the Desktop 1, just as you would use <kbd>CapsLock</kbd> + <kbd>1</kbd>).
 
