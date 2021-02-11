@@ -1,9 +1,3 @@
-#SingleInstance Force ; The script will Reload if launched while already running
-#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases
-#KeyHistory 0 ; Ensures user privacy when debugging is not needed
-SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory
-SendMode Input  ; Recommended for new scripts due to its superior speed and reliability
-
 ; Globals
 DesktopCount := 2        ; Windows starts with 2 desktops at boot
 CurrentDesktop := 1      ; Desktop count is 1-indexed (Microsoft numbers them this way)
@@ -15,12 +9,8 @@ global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDes
 global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "MoveWindowToDesktopNumber", "Ptr")
 
 ; Main
-SetKeyDelay, 75
 mapDesktopsFromRegistry()
 OutputDebug, [loading] desktops: %DesktopCount% current: %CurrentDesktop%
-
-#Include %A_ScriptDir%\user_config.ahk
-return
 
 ;
 ; This function examines the registry to build an accurate list of the current virtual desktops and which one we're currently on.
