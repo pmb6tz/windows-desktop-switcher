@@ -60,8 +60,11 @@ CapsLock & u::MoveCurrentWindowToDesktop(7)
 CapsLock & i::MoveCurrentWindowToDesktop(8)
 CapsLock & o::MoveCurrentWindowToDesktop(9)
 
+CapsLock & Right::MoveCurrentWindowToRightDesktop()
+CapsLock & Left::MoveCurrentWindowToLeftDesktop()
+
 ; === INSTRUCTIONS ===
-; Below is the alternate key configuration. Delete symbol ; in the beginning of the line to enable. 
+; Below is the alternate key configuration. Delete symbol ; in the beginning of the line to enable.
 ; Note, that  ^!1  means "Ctrl + Alt + 1" and  ^#1  means "Ctrl + Win + 1"
 ; === END OF INSTRUCTIONS ===
 
@@ -113,3 +116,15 @@ CapsLock & o::MoveCurrentWindowToDesktop(9)
 ; ^#Numpad7::MoveCurrentWindowToDesktop(7)
 ; ^#Numpad8::MoveCurrentWindowToDesktop(8)
 ; ^#Numpad9::MoveCurrentWindowToDesktop(9)
+
+; ^#Right::MoveCurrentWindowToRightDesktop()
+; ^#Left::MoveCurrentWindowToLeftDesktop()
+
+
+
+; === INSTRUCTIONS ===
+; Additional alternative shortcut for moving current window to left or right desktop (ctrl+shift+Win+left/right)
+; === END OF INSTRUCTIONS ===
+
+; ^#+Right::MoveCurrentWindowToRightDesktop()
+; ^#+Left::MoveCurrentWindowToLeftDesktop()
