@@ -86,6 +86,10 @@ The task is now registered and will run on the next logon, and can be viewed or 
 
 Solution is described in [#66](https://github.com/pmb6tz/windows-desktop-switcher/issues/66#issuecomment-741793147).
 
+#### How to create a specific number of desktops after the application is started?
+
+Solution is described in [#69](https://github.com/pmb6tz/windows-desktop-switcher/issues/69#issuecomment-786976955)
+
 ## Credits
 
 - Thanks to [Ciantic/VirtualDesktopAccessor](https://github.com/Ciantic/VirtualDesktopAccessor) (DLL) and [sdias/win-10-virtual-desktop-enhancer](https://github.com/sdias/win-10-virtual-desktop-enhancer) (DLL usage samples), our code can now move windows between desktops.
