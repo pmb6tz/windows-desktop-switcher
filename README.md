@@ -88,7 +88,11 @@ Solution is described in [#66](https://github.com/pmb6tz/windows-desktop-switche
 
 #### How to create a specific number of desktops after the application is started?
 
-Solution is described in [#69](https://github.com/pmb6tz/windows-desktop-switcher/issues/69#issuecomment-786976955)
+Solution is described in [#69](https://github.com/pmb6tz/windows-desktop-switcher/issues/69#issuecomment-786976955).
+
+#### How to see at a glance, which of the desktops am I currently on (i.e. show a number of the current desktop as a tray bar icon)?
+
+Solution is described in [#50](https://github.com/pmb6tz/windows-desktop-switcher/issues/50#issuecomment-935875918).
 
 ## Credits
 
