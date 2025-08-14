@@ -111,13 +111,16 @@ _switchDesktopToTarget(targetDesktop)
 
     LastOpenedDesktop := CurrentDesktop
 
-    ; Fixes the issue of active windows in intermediate desktops capturing the switch shortcut and therefore delaying or stopping the switching sequence. This also fixes the flashing window button after switching in the taskbar. More info: https://github.com/pmb6tz/windows-desktop-switcher/pull/19
-    WinActivate, ahk_class Shell_TrayWnd
+    ; Focus the taskbar to ensure that the application icons are not flashing
+    ; while switching desktops. Using SetForegroundWindow() instead of
+    ; WinActivate() here, because WinActivate() introduces a noticeable delay
+    ; in the interaction.
+    taskbarHwnd := DllCall("FindWindow", "Str", "Shell_TrayWnd", "Ptr", 0, "UPtr")
+    if (taskbarHwnd) {
+        DllCall("SetForegroundWindow", "UPtr", taskbarHwnd)
+    }
 
     DllCall(GoToDesktopNumberProc, Int, targetDesktop-1)
-
-    ; Makes the WinActivate fix less intrusive
-    Sleep, 50
     focusTheForemostWindow(targetDesktop)
 }
 
@@ -159,7 +162,7 @@ switchDesktopToLeft()
 focusTheForemostWindow(targetDesktop) {
     foremostWindowId := getForemostWindowIdOnDesktop(targetDesktop)
     if isWindowNonMinimized(foremostWindowId) {
-        WinActivate, ahk_id %foremostWindowId%
+        DllCall("SetForegroundWindow", "UPtr", foremostWindowId)
     }
 }
 
