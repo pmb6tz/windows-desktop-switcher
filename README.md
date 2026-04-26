@@ -1,104 +1,122 @@
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/U6U82G0A5)
+# WDS 1.0
 
-# windows-desktop-switcher
-An AutoHotkey script for Windows that lets a user switch virtual desktops by pressing <kbd>CapsLock</kbd> and a number row key at the sime time (e.g. <kbd>CapsLock</kbd> + <kbd>2</kbd> to switch to Desktop 2). It also provides other features, such as customizing the key combinations, creation/deletion of desktops by hotkey, etc. (see Hotkeys section below).
+Human-first virtual desktop switching for Windows.
 
-## Hotkeys
+WDS 1.0 is a restart point for a small AutoHotkey-based desktop workflow: press a simple shortcut, jump to the workspace you meant, and keep moving. The project is intentionally lightweight. It exists for people who use Windows virtual desktops every day and want direct, reliable keyboard control instead of slow workspace navigation.
 
-Action | Keys 
---- | :-:
-**Switch** to virtual desktop **1, 2, etc.**<br>*(you can also use the Numpad)*|<kbd>CapsLock</kbd> + <kbd>1</kbd><br><kbd>CapsLock</kbd> + <kbd>2</kbd><br>...<br><kbd>CapsLock</kbd> + <kbd>9</kbd>
-**Switch back** to the last desktop used|<kbd>CapsLock</kbd> + <kbd>Tab</kbd>
-**Switch** to the virtual desktop on the **left**<br>*(auto-cycles from the first to the last desktop)*|<kbd>CapsLock</kbd> + <kbd>A</kbd><br><kbd>CapsLock</kbd> + <kbd>P</kbd>
-**Switch** to the virtual desktop on the **right**<br>*(auto-cycles from the last to the first desktop)*|<kbd>CapsLock</kbd> + <kbd>S</kbd><br><kbd>CapsLock</kbd> + <kbd>N</kbd>
-**Create** a new virtual desktop|**<kbd>CapsLock</kbd> + <kbd>C</kbd>**
-**Delete** the current virtual desktop|<kbd>CapsLock</kbd> + <kbd>D</kbd>
-**Move** the current window to another desktop, then switch to it<br>*Keys <kbd>Q</kbd>, <kbd>W</kbd>, etc. correspond to **1st, 2nd, etc.** desktops*|<kbd>CapsLock</kbd> + <kbd>Q</kbd><br><kbd>CapsLock</kbd> + <kbd>W</kbd><br>...<br><kbd>CapsLock</kbd> + <kbd>O</kbd>
-**Move** the current window to the previous or the next desktop, then switch to it|<kbd>CapsLock</kbd> + <kbd>←</kbd><br><kbd>CapsLock</kbd> + <kbd>→</kbd>
+This fork is based on `windows-desktop-switcher` and currently keeps the legacy AutoHotkey v1 architecture.
 
-Note, <kbd>CapsLock</kbd> continues to function normally even when it is used as a modifier. [But you can make the button do more useful things such as open overview, or disable it altogether](https://github.com/pmb6tz/windows-desktop-switcher/issues/67).
+## What It Does
 
-If you'd like, you can [enable the alternate configuration](https://github.com/pmb6tz/windows-desktop-switcher/issues/44), to use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> as hotkey combination keys instead of <kbd>CapsLock</kbd> (e.g. use <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>1</kbd> to switch to the Desktop 1, just as you would use <kbd>CapsLock</kbd> + <kbd>1</kbd>).
+- Switch directly to virtual desktops 1-9.
+- Switch left or right through desktops.
+- Return to the last opened desktop.
+- Create or delete virtual desktops.
+- Move the current window to another desktop, then follow it there.
+- Keep shortcuts configurable in `user_config.ahk`.
 
-Additional hotkeys, such as [pinning a window or app on all workspaces](https://github.com/pmb6tz/windows-desktop-switcher/issues/55), can be added as well.
+## Quick Start
 
-You can also customize the hotkeys and actions as described in the section below.
+1. Install AutoHotkey v1.1.33 or newer.
+2. Keep these files in the same folder:
+   - `desktop_switcher.ahk`
+   - `user_config.ahk`
+   - `VirtualDesktopAccessor.dll`
+3. Run `desktop_switcher.ahk`.
+4. Try `CapsLock` + `1`, `CapsLock` + `2`, and `CapsLock` + `Tab`.
 
-## Overview
-This script creates more convenient hotkeys for switching virtual desktops in Windows 10. I built this to better mirror the mapping I use on linux (with dwm), and it's always annoyed me that Windows does not have better hotkey support for this feature (for instance, there's no way to go directly to a desktop by number).
+AutoHotkey v2 is not supported by the current scripts.
 
-## Running
-[Install AutoHotkey v1.1](https://autohotkey.com/download/1.1/AutoHotkey_1.1.37.02_setup.exe) (v2 is [not supported](https://github.com/pmb6tz/windows-desktop-switcher/issues/93) at this time), then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). You can disable the switching animation by opening "Adjust the appearance and performance of Windows" and then unselecting the checkmark "Animate windows when minimizing and maximizing".
+## Default Shortcuts
 
-### Notes about Windows 1809/1903≤ Updates
-This project relies partly on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor) (for moving windows to other desktops). This binary is included in this repository for convenience, and was recently updated to work with the 1809/1903≤ updates. 
+| Action | Shortcut |
+| --- | --- |
+| Go to desktop 1-9 | <kbd>CapsLock</kbd> + <kbd>1</kbd> ... <kbd>9</kbd> |
+| Go to desktop 1-9 with numpad | <kbd>CapsLock</kbd> + <kbd>Numpad1</kbd> ... <kbd>Numpad9</kbd> |
+| Go to the last opened desktop | <kbd>CapsLock</kbd> + <kbd>Tab</kbd> |
+| Go right | <kbd>CapsLock</kbd> + <kbd>S</kbd> or <kbd>N</kbd> |
+| Go left | <kbd>CapsLock</kbd> + <kbd>A</kbd> or <kbd>P</kbd> |
+| Create a desktop | <kbd>CapsLock</kbd> + <kbd>C</kbd> |
+| Delete the current desktop | <kbd>CapsLock</kbd> + <kbd>D</kbd> |
+| Move current window to desktop 1-9 | <kbd>CapsLock</kbd> + <kbd>Q</kbd> ... <kbd>O</kbd> |
+| Move current window right or left | <kbd>CapsLock</kbd> + <kbd>Right</kbd> or <kbd>Left</kbd> |
 
-This may cause instability for users running older versions of Windows. If this is the case, [download the older DLL](https://github.com/pmb6tz/windows-desktop-switcher/blob/5289a0968179638f6e946a4cb69723510abd0d19/virtual-desktop-accessor.dll), rename it to `VirtualDesktopAccessor.dll`, and overwrite the previous DLL.
+`CapsLock` still works as Caps Lock when it is not used as a shortcut modifier.
 
-If a future Windows Update breaks the DLL again and updating your files from this repository doesn't work, you could try [building the DLL yourself](https://github.com/Ciantic/VirtualDesktopAccessor) (given that it was since updated by its' creators).
+## Customize Shortcuts
 
-## Customizing Hotkeys
-To change the key mappings, modify the `user_config.ahk` script and then run `desktop_switcher.ahk` (program will restart if it's already running). Note, `!` corresponds to <kbd>Alt</kbd>, `+` is <kbd>Shift</kbd>, `#` is <kbd>Win</kbd>, and `^` is <kbd>Ctrl</kbd>. A more detailed description of hotkeys can be found [here](https://autohotkey.com/docs/Hotkeys.htm). The syntax of the config file is `HOTKEY::ACTION`. Here are some examples of the customization options. 
+Edit `user_config.ahk`, then run `desktop_switcher.ahk` again. The script uses AutoHotkey v1 syntax:
 
-Single line of code example | Meaning
---- | ---
-`!n::switchDesktopToRight()`&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Hotkey:** <kbd>Alt</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right
-`#!space::switchDesktopToRight()` | **Hotkey:** <kbd>Win</kbd> + <kbd>Alt</kbd> + <kbd>Space</kbd><br>**Action:** Switch to the desktop on the right
-`CapsLock & n::switchDesktopToRight()` | **Hotkey:** <kbd>Capslock</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right<br>*(& is necessary when using a non-modifier key such as Capslock)*
-`!n::switchDesktopToRight()` | **Hotkey:** <kbd>Alt</kbd> + <kbd>N</kbd><br>**Action:** Switch to the desktop on the right
-`^space::send, #{tab} ` | **Hotkey:** <kbd>Ctrl</kbd> + <kbd>Space</kbd><br>**Action:** Open Desktop Manager by sending <kbd>Win</kbd> + <kbd>Tab</kbd>
+| Symbol | Key |
+| --- | --- |
+| `!` | Alt |
+| `+` | Shift |
+| `^` | Ctrl |
+| `#` | Win |
 
-A more detailed description of hotkeys can be found here: [AutoHotkey docs](https://autohotkey.com/docs/Hotkeys.htm).<br>
-You can find the explanation for the Desktop Manager hotkey [here](https://github.com/pmb6tz/windows-desktop-switcher/issues/41).<br>
-After any changes to the configuration the program needs to be closed and opened again.
+Example:
 
-## Running on boot
-
-You can make the script run on every boot with either of these methods.
-
-### Simple (Non-administrator method)
-
-1. Press <kbd>Win</kbd> + <kbd>R</kbd>, enter `shell:startup`, then click <kbd>OK</kbd>
-2. Create a shortcut to the `desktop_switcher.ahk` file here
-
-### Advanced (Administrator method)
-
-Windows prevents hotkeys from working in windows that were launched with higher elevation than the AutoHotKey script (such as CMD or Powershell terminals that were launched as Administrator). As a result, Windows Desktop Switcher hotkeys will only work within these windows if the script itself is `Run as Administrator`, due to the way Windows is designed. 
-
-You can do this by creating a scheduled task to invoke the script at logon. You may use 'Task Scheduler', or create the task in powershell as demonstrated.
-```
-# Run the following commands in an Administrator powershell prompt. 
-# Be sure to specify the correct path to your desktop_switcher.ahk file. 
-
-$A = New-ScheduledTaskAction -Execute "PATH\TO\desktop_switcher.ahk"
-$T = New-ScheduledTaskTrigger -AtLogon
-$P = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Administrators" -RunLevel Highest
-$S = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -ExecutionTimeLimit 0
-$D = New-ScheduledTask -Action $A -Principal $P -Trigger $T -Settings $S
-Register-ScheduledTask WindowsDesktopSwitcher -InputObject $D
+```ahk
+!n::switchDesktopToRight()
+#!space::switchDesktopToRight()
+CapsLock & n::switchDesktopToRight()
 ```
 
-The task is now registered and will run on the next logon, and can be viewed or modified in 'Task Scheduler'. 
+The current config also includes commented alternate mappings for `Ctrl` + `Alt` and `Ctrl` + `Win`.
 
-## Q&A
+## Run On Sign-In
 
-#### How to prevent cycling of desktop switching when end desktop or start desktop is reached?
+Simple user startup:
 
-Solution is described in [#66](https://github.com/pmb6tz/windows-desktop-switcher/issues/66#issuecomment-741793147).
+1. Press <kbd>Win</kbd> + <kbd>R</kbd>.
+2. Enter `shell:startup`.
+3. Add a shortcut to `desktop_switcher.ahk`.
 
-#### How to create a specific number of desktops after the application is started?
+Administrator startup is useful when you need shortcuts to work inside elevated windows. Use Windows Task Scheduler and run the script at logon with highest privileges. The exact path must point to your local `desktop_switcher.ahk` file.
 
-Solution is described in [#69](https://github.com/pmb6tz/windows-desktop-switcher/issues/69#issuecomment-786976955).
+## Current Project State
 
-#### How to see at a glance, which of the desktops am I currently on (i.e. show a number of the current desktop as a tray bar icon)?
+This repository is in a documentation restart phase.
 
-Solution is described in [#50](https://github.com/pmb6tz/windows-desktop-switcher/issues/50#issuecomment-935875918).
+Confirmed from source:
+
+- Runtime entrypoint: `desktop_switcher.ahk`.
+- User shortcut map: `user_config.ahk`.
+- Native helper expected by the script: `VirtualDesktopAccessor.dll`.
+- Current script target: AutoHotkey v1.1.33+.
+- The script reads Windows virtual desktop data from the registry and includes a Windows 11 registry location fallback.
+
+Not yet confirmed in this repository:
+
+- Fresh Windows 10 compatibility test.
+- Fresh Windows 11 compatibility test.
+- Current `VirtualDesktopAccessor.dll` compatibility across recent Windows builds.
+- Packaged release format.
+- License file status for this fork.
+
+See [STATUS.md](STATUS.md) and [TASKS.md](TASKS.md) before making product claims.
+
+## Project Records
+
+The Markdown files are the working memory for this project:
+
+- [STATUS.md](STATUS.md) - active truth and validation state.
+- [HANDOFF.md](HANDOFF.md) - compact restart notes for the next session.
+- [TASKS.md](TASKS.md) - next work, blocked work, and done work.
+- [DECISIONS.md](DECISIONS.md) - decisions that should not be re-litigated casually.
+- [PROJECT_RECORDS.md](PROJECT_RECORDS.md) - writing style for project notes.
+- [CHANGELOG.md](CHANGELOG.md) - dated documentation and project changes.
+
+## Troubleshooting
+
+If shortcuts do not work:
+
+- Confirm AutoHotkey v1 is installed, not only AutoHotkey v2.
+- Confirm `VirtualDesktopAccessor.dll` is in the same folder as `desktop_switcher.ahk`.
+- Restart the script after editing `user_config.ahk`.
+- Run as administrator if you need shortcuts inside elevated apps.
+- Use Sysinternals DebugView if you need to inspect debug output from the script.
 
 ## Credits
 
-- Thanks to [Ciantic/VirtualDesktopAccessor](https://github.com/Ciantic/VirtualDesktopAccessor) (DLL) and [sdias/win-10-virtual-desktop-enhancer](https://github.com/sdias/win-10-virtual-desktop-enhancer) (DLL usage samples), our code can now move windows between desktops.
-
-## Other
-To see debug messages, download [SysInternals DebugView](https://technet.microsoft.com/en-us/sysinternals/debugview).
-
-This script is intended to be lightweight in order to prioritize performance and robustness. For more advanced features (such as configuring different wallpapers on different desktops) check out https://github.com/sdias/win-10-virtual-desktop-enhancer.
+This fork descends from the original `windows-desktop-switcher` project and relies on `VirtualDesktopAccessor.dll` from the wider Windows virtual desktop tooling ecosystem. Preserve upstream credit when modifying or redistributing the project.
