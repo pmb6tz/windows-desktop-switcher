@@ -107,6 +107,12 @@ The Markdown files are the working memory for this project:
 - [PROJECT_RECORDS.md](PROJECT_RECORDS.md) - writing style for project notes.
 - [CHANGELOG.md](CHANGELOG.md) - dated documentation and project changes.
 
+Repository care files:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) - how to change the project safely.
+- [SUPPORT.md](SUPPORT.md) - how to report usage issues with useful context.
+- [SECURITY.md](SECURITY.md) - how to handle security-sensitive reports.
+
 ## Troubleshooting
 
 If shortcuts do not work:
