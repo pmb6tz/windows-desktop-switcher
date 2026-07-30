@@ -15,6 +15,13 @@ hVirtualDesktopAccessor := DllCall("LoadLibrary", "Str", A_ScriptDir . "\Virtual
 global IsWindowOnDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "IsWindowOnDesktopNumber", "Ptr")
 global MoveWindowToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "MoveWindowToDesktopNumber", "Ptr")
 global GoToDesktopNumberProc := DllCall("GetProcAddress", Ptr, hVirtualDesktopAccessor, AStr, "GoToDesktopNumber", "Ptr")
+global hDesktopFocusBridge := DllCall("LoadLibrary", "Str", A_ScriptDir . "\DesktopFocusBridge.dll", "Ptr")
+global PrepareWindowFocusProc := DllCall("GetProcAddress", Ptr, hDesktopFocusBridge, AStr, "PrepareWindowFocus", "Ptr")
+global CommitWindowFocusProc := DllCall("GetProcAddress", Ptr, hDesktopFocusBridge, AStr, "CommitWindowFocus", "Ptr")
+global CancelWindowFocusProc := DllCall("GetProcAddress", Ptr, hDesktopFocusBridge, AStr, "CancelWindowFocus", "Ptr")
+global FocusBridgeAvailable := hDesktopFocusBridge && PrepareWindowFocusProc && CommitWindowFocusProc && CancelWindowFocusProc
+global ActiveWindowByDesktop := {}
+global ActiveWindowPidByDesktop := {}
 
 ; Main
 SetKeyDelay, 75
@@ -101,7 +108,8 @@ getSessionId()
 _switchDesktopToTarget(targetDesktop)
 {
     ; Globals variables should have been updated via updateGlobalVariables() prior to entering this function
-    global CurrentDesktop, DesktopCount, LastOpenedDesktop
+    global CurrentDesktop, DesktopCount, LastOpenedDesktop, FocusBridgeAvailable
+    global GoToDesktopNumberProc, PrepareWindowFocusProc, CommitWindowFocusProc, CancelWindowFocusProc
 
     ; Don't attempt to switch to an invalid desktop
     if (targetDesktop > DesktopCount || targetDesktop < 1 || targetDesktop == CurrentDesktop) {
@@ -111,17 +119,51 @@ _switchDesktopToTarget(targetDesktop)
 
     LastOpenedDesktop := CurrentDesktop
 
-    ; Focus the taskbar to ensure that the application icons are not flashing
-    ; while switching desktops. Using SetForegroundWindow() instead of
-    ; WinActivate() here, because WinActivate() introduces a noticeable delay
-    ; in the interaction.
-    taskbarHwnd := DllCall("FindWindow", "Str", "Shell_TrayWnd", "Ptr", 0, "UPtr")
-    if (taskbarHwnd) {
-        DllCall("SetForegroundWindow", "UPtr", taskbarHwnd)
+    currentWindowId := DllCall("GetForegroundWindow", "Ptr")
+    rememberDesktopWindow(CurrentDesktop, currentWindowId)
+
+    targetWindowId := getDesktopFocusWindow(targetDesktop)
+    if (targetWindowId && !raiseWindowWithoutActivation(targetWindowId)) {
+        forgetDesktopWindow(targetDesktop)
+        targetWindowId := 0
     }
 
-    DllCall(GoToDesktopNumberProc, Int, targetDesktop-1)
-    focusTheForemostWindow(targetDesktop)
+    focusPrepared := false
+    if (FocusBridgeAvailable && targetWindowId) {
+        prepareResult := DllCall(PrepareWindowFocusProc, "Ptr", targetWindowId, "Int")
+        focusPrepared := prepareResult >= 0
+        if (!focusPrepared) {
+            OutputDebug, [focus] prepare failed: %prepareResult%
+        }
+    }
+
+    ; Preserve the previous behavior only when the native focus handoff cannot
+    ; be prepared (for example, on an unsupported Windows build).
+    if (!focusPrepared) {
+        taskbarHwnd := DllCall("FindWindow", "Str", "Shell_TrayWnd", "Ptr", 0, "UPtr")
+        if (taskbarHwnd) {
+            DllCall("SetForegroundWindow", "UPtr", taskbarHwnd)
+        }
+    }
+
+    switchResult := DllCall(GoToDesktopNumberProc, "Int", targetDesktop - 1, "Int")
+    if (switchResult != 1) {
+        if (focusPrepared) {
+            DllCall(CancelWindowFocusProc)
+        }
+        OutputDebug, [switch] failed: %switchResult%
+        return
+    }
+
+    if (focusPrepared) {
+        commitResult := DllCall(CommitWindowFocusProc, "Int")
+        if (commitResult < 0) {
+            OutputDebug, [focus] commit failed: %commitResult%
+        }
+    }
+    else {
+        focusTheForemostWindow(targetDesktop)
+    }
 }
 
 updateGlobalVariables()
@@ -173,18 +215,101 @@ isWindowNonMinimized(windowId) {
 
 getForemostWindowIdOnDesktop(n)
 {
-    n := n - 1 ; Desktops start at 0, while in script it's 1
-
     ; winIDList contains a list of windows IDs ordered from the top to the bottom for each desktop.
     WinGet winIDList, list
     Loop % winIDList {
         windowID := % winIDList%A_Index%
-        windowIsOnDesktop := DllCall(IsWindowOnDesktopNumberProc, UInt, windowID, UInt, n)
-        ; Select the first (and foremost) window which is in the specified desktop.
-        if (windowIsOnDesktop == 1) {
+        if (isDesktopApplicationWindow(windowID, n)) {
             return windowID
         }
     }
+}
+
+rememberDesktopWindow(desktopNumber, windowId)
+{
+    global ActiveWindowByDesktop, ActiveWindowPidByDesktop
+
+    if (!isDesktopApplicationWindow(windowId, desktopNumber)) {
+        return false
+    }
+
+    WinGet, processId, PID, ahk_id %windowId%
+    if (!processId) {
+        return false
+    }
+
+    ActiveWindowByDesktop[desktopNumber] := windowId
+    ActiveWindowPidByDesktop[desktopNumber] := processId
+    return true
+}
+
+forgetDesktopWindow(desktopNumber)
+{
+    global ActiveWindowByDesktop, ActiveWindowPidByDesktop
+    ActiveWindowByDesktop.Delete(desktopNumber)
+    ActiveWindowPidByDesktop.Delete(desktopNumber)
+}
+
+getDesktopFocusWindow(desktopNumber)
+{
+    global ActiveWindowByDesktop, ActiveWindowPidByDesktop
+
+    if (ActiveWindowByDesktop.HasKey(desktopNumber)) {
+        windowId := ActiveWindowByDesktop[desktopNumber]
+        WinGet, processId, PID, ahk_id %windowId%
+        if (processId == ActiveWindowPidByDesktop[desktopNumber]
+                && isDesktopApplicationWindow(windowId, desktopNumber)) {
+            return windowId
+        }
+        forgetDesktopWindow(desktopNumber)
+    }
+
+    windowId := getForemostWindowIdOnDesktop(desktopNumber)
+    if (windowId) {
+        rememberDesktopWindow(desktopNumber, windowId)
+    }
+    return windowId
+}
+
+isDesktopApplicationWindow(windowId, desktopNumber)
+{
+    global IsWindowOnDesktopNumberProc
+
+    if (!windowId || !DllCall("IsWindow", "Ptr", windowId)) {
+        return false
+    }
+    if (!DllCall("IsWindowVisible", "Ptr", windowId)
+            || DllCall("IsIconic", "Ptr", windowId)) {
+        return false
+    }
+    if (DllCall(IsWindowOnDesktopNumberProc, "Ptr", windowId, "UInt", desktopNumber - 1, "Int") != 1) {
+        return false
+    }
+
+    WinGetTitle, windowTitle, ahk_id %windowId%
+    WinGetClass, windowClass, ahk_id %windowId%
+    WinGet, exStyle, ExStyle, ahk_id %windowId%
+
+    if (windowTitle == "" || (exStyle & 0x00000080) || (exStyle & 0x08000000)) {
+        return false
+    }
+    if (windowClass == "Shell_TrayWnd" || windowClass == "Shell_SecondaryTrayWnd"
+            || windowClass == "Progman" || windowClass == "WorkerW") {
+        return false
+    }
+    return true
+}
+
+raiseWindowWithoutActivation(windowId)
+{
+    static HWND_TOP := 0
+    static SWP_NOSIZE := 0x0001
+    static SWP_NOMOVE := 0x0002
+    static SWP_NOACTIVATE := 0x0010
+    static SWP_NOOWNERZORDER := 0x0200
+    flags := SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE | SWP_NOOWNERZORDER
+
+    return DllCall("SetWindowPos", "Ptr", windowId, "Ptr", HWND_TOP, "Int", 0, "Int", 0, "Int", 0, "Int", 0, "UInt", flags, "Int") == 1
 }
 
 MoveCurrentWindowToDesktop(desktopNumber) {
