@@ -30,8 +30,30 @@ This script creates more convenient hotkeys for switching virtual desktops in Wi
 ## Running
 [Install AutoHotkey v1.1](https://autohotkey.com/download/1.1/AutoHotkey_1.1.37.02_setup.exe) (v2 is [not supported](https://github.com/pmb6tz/windows-desktop-switcher/issues/93) at this time), then run the `desktop_switcher.ahk` script (open with AutoHotkey if prompted). You can disable the switching animation by opening "Adjust the appearance and performance of Windows" and then unselecting the checkmark "Animate windows when minimizing and maximizing".
 
-### Notes about Windows 1809/1903≤ Updates
-This project relies partly on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor) (for moving windows to other desktops). This binary is included in this repository for convenience, and was recently updated to work with the 1809/1903≤ updates. 
+### Window focus after switching
+
+`DesktopFocusBridge.dll` lets the script restore keyboard focus to the window
+that was last active on the destination desktop, or to its foremost application
+window on the first visit. The script prepares that window before the direct
+desktop switch, grants the out-of-process Windows Shell permission to set the
+foreground window, and focuses the corresponding application view once after
+the switch. This avoids activating the taskbar or sending `Alt+Tab` / `Alt+Esc`
+on supported Windows builds.
+
+The bridge uses undocumented Windows Shell COM interfaces, which can change in
+a future Windows update. If the bridge cannot prepare a focus handoff, the
+script falls back to its previous taskbar and `SetForegroundWindow` behavior.
+The included bridge is x64 to match `VirtualDesktopAccessor.dll`.
+
+To rebuild the bridge, install Visual Studio Build Tools with the **Desktop
+development with C++** workload, then run:
+
+```powershell
+.\build_focus_bridge.ps1
+```
+
+### Notes about Windows updates
+This project relies partly on [VirtualDesktopAccessor.dll](https://github.com/Ciantic/VirtualDesktopAccessor) (for moving windows to other desktops). The included binary comes from the official [`2024-12-16-windows11` release](https://github.com/Ciantic/VirtualDesktopAccessor/releases/tag/2024-12-16-windows11), which supports Windows 11 24H2 build 26100.2605.
 
 This may cause instability for users running older versions of Windows. If this is the case, [download the older DLL](https://github.com/pmb6tz/windows-desktop-switcher/blob/5289a0968179638f6e946a4cb69723510abd0d19/virtual-desktop-accessor.dll), rename it to `VirtualDesktopAccessor.dll`, and overwrite the previous DLL.
 
